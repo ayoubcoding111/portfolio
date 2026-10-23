@@ -691,7 +691,7 @@ export function createKeyboard(stage, canvas, opts) {
     const W = canvas.width, H = canvas.height;
     if (!W || !H) { raf = requestAnimationFrame(frame); return; }
     const vw = canvas.clientWidth, vh = canvas.clientHeight;
-    const sr = stage.getBoundingClientRect();
+    const sr = (stage.querySelector('.pf-kb__board') || stage).getBoundingClientRect();
     const secTop = section.getBoundingClientRect().top;
 
     // ---- the flight, driven by scroll. While the section above is still on screen (this section's top 2 screens down)

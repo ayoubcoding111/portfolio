@@ -336,17 +336,18 @@ html,.lenis{scrollbar-gutter:stable}
 .pf-kb__head{display:grid;gap:1.5rem clamp(2rem, 6vw, 6rem);align-items:end}
 @media (min-width: 900px){ .pf-kb__head{grid-template-columns:minmax(0, 1fr) minmax(0, 26rem)} }
 .pf-kb__lede{color:var(--muted)}
-.pf-kb__stage{position:relative;height:clamp(380px, 46vw, 700px);margin-top:clamp(1rem, 3vw, 2.5rem);border-radius:var(--r-l);touch-action:pan-y;-webkit-tap-highlight-color:transparent}
+.pf-kb__stage{position:relative;margin-top:clamp(1rem, 3vw, 2.5rem);border-radius:var(--r-l);touch-action:pan-y;-webkit-tap-highlight-color:transparent}
+.pf-kb__board{height:clamp(300px, 40vw, 600px)}
 .pf-kb__stage:focus-visible{outline:2px solid var(--focus);outline-offset:4px}
 /* The keyboard flies in across the section above, so its canvas covers the viewport; it never takes a click. It sits
    just above the page's ground and under all content, so text always reads on top of it (.pf isolates the layers). */
 .pf-kb__canvas{position:fixed;inset:0;z-index:-1;display:block;width:100vw;height:100vh;pointer-events:none}
-.pf-kb__info{position:absolute;left:0;top:0;z-index:41;max-width:min(30rem, 62%);pointer-events:none}
+.pf-kb__info{position:relative;z-index:41;min-height:9.5rem;max-width:30rem;pointer-events:none}
 .pf-kb__card{display:grid;gap:.7rem}
 .pf-kb__meta{display:flex;align-items:center;gap:.75rem;font-family:var(--f-mono);font-size:.75rem;letter-spacing:.12em;color:var(--muted)}
 .pf-kb__bar{width:2.5rem;height:3px;border-radius:3px;background:var(--kb-c);transform-origin:0 50%;animation:pfKbBar .5s var(--ease-out) both}
 .pf-kb__mask{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em}
-.pf-kb__title{display:block;font-stretch:125%;font-weight:800;font-size:clamp(2.25rem, 1.3rem + 3.6vw, 4.75rem);line-height:.95;letter-spacing:-.045em;color:var(--ink);animation:pfKbRise .5s var(--ease-out) both}
+.pf-kb__title{display:block;font-stretch:125%;font-weight:800;font-size:clamp(1.5rem, 1rem + 1.6vw, 2.5rem);line-height:1;letter-spacing:-.04em;color:var(--ink);animation:pfKbRise .5s var(--ease-out) both}
 .pf-kb__desc{max-width:32ch;font-size:clamp(1rem, .95rem + .3vw, 1.25rem);line-height:1.4;color:var(--muted);animation:pfKbFade .45s var(--ease-out) .07s both}
 .pf-kb__hint{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);animation:pfKbFade .45s var(--ease-out) both}
 @keyframes pfKbRise{from{transform:translateY(105%)}}

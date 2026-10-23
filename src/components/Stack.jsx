@@ -75,8 +75,9 @@ export default function Stack({ theme }) {
               aria-label="A keyboard of the tools I use. Use the arrow keys to move between keys, Enter to press, or type a tool's first letter."
             >
               <canvas className="pf-kb__canvas" ref={canvasRef} aria-hidden="true"></canvas>
-              {/* The hovered key's name and line, top left of the keyboard. Keyed by tool, so each change replays the
-                  entrance: the name rises out of a mask, the colour bar draws, the line follows. */}
+              {/* The hovered key's name and line, above the keyboard in space of its own, so it never covers a key.
+                  Keyed by tool, so each change replays the entrance: the name rises out of a mask, the colour bar
+                  draws, the line follows. */}
               <div className="pf-kb__info" aria-live="polite">
                 {tool ? (
                   <div className="pf-kb__card" key={tool.name} style={{ '--kb-c': tool.dark ? 'var(--ink)' : '#' + tool.hex }}>
@@ -88,6 +89,7 @@ export default function Stack({ theme }) {
                   <p className="pf-kb__hint" key="hint">{pad(STACK.length)} tools · {verb.toLowerCase()} a key</p>
                 )}
               </div>
+              <div className="pf-kb__board" aria-hidden="true"></div>
             </div>
             <ul className="pf-sr">{STACK.map((t) => <li key={t.name}>{t.name}: {t.desc}</li>)}</ul>
           </>
