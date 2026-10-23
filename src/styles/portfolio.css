@@ -31,6 +31,7 @@ html,.lenis{scrollbar-gutter:stable}
   --hn-ink:var(--ink);--hn-glow:var(--accent);
   --hn-glow-a:color-mix(in oklab, var(--accent) 90%, transparent);--hn-glow-b:color-mix(in oklab, var(--accent) 50%, transparent);--hn-glow-c:color-mix(in oklab, var(--accent) 24%, transparent);
   --cursor-ring:rgb(13 18 48 / .45);--shade:243 244 246;
+  --faq-band:#0D1230;--faq-text:#FFFFFF;--faq-pill:color-mix(in oklab, var(--accent) 18%, #FFFFFF);--faq-pill-ink:#0D1230;
   --ease-out:cubic-bezier(0.23, 1, 0.32, 1);
   --ease-drawer:cubic-bezier(0.32, 0.72, 0, 1);
   --gutter:clamp(1.25rem, 4.4vw, 4rem);
@@ -59,6 +60,7 @@ html,.lenis{scrollbar-gutter:stable}
   --hn-glow:color-mix(in oklab, var(--accent) 42%, #FFFFFF);
   --hn-glow-a:color-mix(in oklab, var(--accent) 70%, #FFFFFF);--hn-glow-b:color-mix(in oklab, var(--accent) 72%, transparent);--hn-glow-c:color-mix(in oklab, var(--accent) 36%, transparent);
   --cursor-ring:rgb(238 242 248 / .5);--shade:5 6 8;
+  --faq-band:color-mix(in oklab, var(--accent) 18%, #FFFFFF);--faq-text:#0D1230;--faq-pill:#0D1230;--faq-pill-ink:color-mix(in oklab, var(--accent) 38%, #FFFFFF);
 }
 @media (prefers-color-scheme: dark){
   .pf[data-theme="system"]{
@@ -75,6 +77,7 @@ html,.lenis{scrollbar-gutter:stable}
     --hn-glow:color-mix(in oklab, var(--accent) 42%, #FFFFFF);
     --hn-glow-a:color-mix(in oklab, var(--accent) 70%, #FFFFFF);--hn-glow-b:color-mix(in oklab, var(--accent) 72%, transparent);--hn-glow-c:color-mix(in oklab, var(--accent) 36%, transparent);
     --cursor-ring:rgb(238 242 248 / .5);--shade:5 6 8;
+    --faq-band:color-mix(in oklab, var(--accent) 18%, #FFFFFF);--faq-text:#0D1230;--faq-pill:#0D1230;--faq-pill-ink:color-mix(in oklab, var(--accent) 38%, #FFFFFF);
   }
 }
 
@@ -150,6 +153,8 @@ html,.lenis{scrollbar-gutter:stable}
 .pf-cursor__ring{position:absolute;left:-18px;top:-18px;width:36px;height:36px;border-radius:50%;border:1px solid var(--cursor-ring);transition:transform .5s var(--ease-out),background-color .35s ease,border-color .35s ease}
 .pf-cursor.is-hover .pf-cursor__ring{transform:scale(1.55);border-color:var(--accent-ink);background:color-mix(in oklab, var(--accent) 12%, transparent)}
 .pf-cursor.is-down .pf-cursor__ring{transform:scale(.8)}
+/* Over an FAQ row the ring sits on the hover band, so it takes the band's text colour. */
+.pf-cursor.is-ink .pf-cursor__ring{border-color:var(--faq-text);background:color-mix(in oklab, var(--faq-text) 10%, transparent)}
 @media (hover: none), (pointer: coarse){ .pf-cursor,.pf-spot{display:none} }
 
 /* ---------- Loader, from the earlier portfolio ---------- */
@@ -397,43 +402,48 @@ html,.lenis{scrollbar-gutter:stable}
   .pf-card__media:hover .pf-glare{opacity:1}
 }
 
-/* ---------- Experience: one chapter per role (lib/motion.js pfExperience) ---------- */
-/* Static layout: a stacked list. It is what shows without JS, under reduced motion and on narrow screens. */
-.pf-xp__head{display:grid;gap:1.25rem clamp(2rem, 6vw, 6rem);align-items:end}
-@media (min-width: 900px){ .pf-xp__head{grid-template-columns:minmax(0, 1fr) minmax(0, 26rem)} }
-.pf-xp__lede{color:var(--muted)}
-.pf-xp__stage{position:relative;isolation:isolate;margin-top:clamp(3rem, 6vw, 5rem)}
-.pf-xp__glow{display:none}
-.pf-xp__list{display:grid;gap:clamp(3rem, 7vw, 5rem)}
-.pf-xp__ch{display:grid;gap:1rem 2.5rem;padding-top:1.5rem;border-top:1px solid var(--line-strong)}
-@media (min-width: 700px){ .pf-xp__ch{grid-template-columns:minmax(0, 15rem) minmax(0, 1fr);align-items:start} }
-.pf-xp__n{display:block;overflow:hidden;padding-bottom:.06em}
-.pf-xp__ni{display:block;font-stretch:125%;font-weight:800;font-size:clamp(4.5rem, 3rem + 7vw, 9rem);line-height:.8;letter-spacing:-.06em;font-variant-numeric:tabular-nums;color:transparent;-webkit-text-stroke:1.5px var(--accent-ink)}
-.pf-xp__eyebrow{display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;font-family:var(--f-mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.pf-xp__eyebrow b{font-weight:500;color:var(--accent-ink)}
-.pf-xp__role{margin-top:1rem;font-stretch:125%;font-weight:760;font-size:clamp(1.75rem, 1.1rem + 2.4vw, 3.25rem);line-height:1;letter-spacing:-.04em;text-wrap:balance}
-.pf-xp__desc{max-width:38ch;margin-top:1.1rem;font-size:clamp(1.0625rem, 1rem + .3vw, 1.25rem);color:var(--muted)}
-.pf-xp__rail{display:none}
-
-/* Pinned story (wide screens, full motion): the section holds the screen and plays one chapter at a time. */
-.pf-xp.is-pinned{padding-block:0}
-.pf-xp.is-pinned .pf-xp__pin{height:100vh}
-.pf-xp.is-pinned .pf-xp__wrap{display:flex;flex-direction:column;height:100%;padding-top:calc(var(--nav-h) + clamp(1rem, 4vh, 2.5rem));padding-bottom:clamp(1.25rem, 4vh, 2.5rem)}
-.pf-xp.is-pinned .pf-h2{font-size:clamp(2.5rem, min(1rem + 4vw, 11vh), 5.5rem)}
-.pf-xp.is-pinned .pf-xp__stage{flex:1;min-height:0;margin-top:clamp(1rem, 4vh, 3rem)}
-.pf-xp.is-pinned .pf-xp__glow{position:absolute;left:0;top:50%;z-index:-1;display:block;width:min(64vw, 60rem);aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side, color-mix(in oklab, var(--accent) 24%, transparent), transparent);pointer-events:none}
-.pf-xp.is-pinned .pf-xp__list{position:absolute;inset:0 0 3.75rem;display:block}
-.pf-xp.is-pinned .pf-xp__ch{position:absolute;inset:0;grid-template-columns:minmax(0, 1.05fr) minmax(0, 1fr);align-items:center;gap:clamp(2rem, 5vw, 6rem);padding:0;border:0}
-.pf-xp.is-pinned .pf-xp__ni{font-size:clamp(8rem, min(22vw, 44vh), 24rem);-webkit-text-stroke-width:2px}
-.pf-xp.is-pinned .pf-xp__role{font-size:clamp(2.25rem, min(1rem + 3.2vw, 8.5vh), 4.75rem)}
-.pf-xp.is-pinned .pf-xp__rail{position:absolute;left:0;right:0;bottom:0;display:block;height:2.75rem}
-.pf-xp__rail::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:var(--line-strong)}
-.pf-xp__fill{position:absolute;left:0;right:0;top:-1px;height:3px;border-radius:3px;background:var(--accent);transform:scaleX(0);transform-origin:0 50%}
-.pf-xp__rail ul{display:flex;justify-content:space-between;padding-top:1rem;font-family:var(--f-mono);font-size:.6875rem;letter-spacing:.14em;color:var(--muted)}
-.pf-xp__rail li{display:flex;align-items:center;gap:.55rem;transition:color .3s ease}
-.pf-xp__rail i{width:.5rem;height:.5rem;border-radius:50%;border:1.5px solid var(--line-strong);transition:background-color .3s ease,border-color .3s ease}
-.pf-xp__rail li.is-on{color:var(--ink)}
-.pf-xp__rail li.is-on i,.pf-xp__rail li.is-done i{border-color:var(--accent-ink);background:var(--accent-ink)}
+/* ---------- FAQ: questions that open in place; on a mouse, a band of keywords floods the row (lib/motion.js pfBindFaq) ---------- */
+.pf-faq__grid{display:grid;gap:clamp(2.5rem, 6vw, 4rem)}
+@media (min-width: 1000px){
+  .pf-faq__grid{grid-template-columns:minmax(0, 5fr) minmax(0, 7fr);align-items:start;gap:clamp(3rem, 6vw, 7rem)}
+  .pf-faq__head{position:sticky;top:calc(var(--nav-h) + 2rem)}
+}
+.pf-faq__head{display:grid;justify-items:start;gap:1.25rem;container-type:inline-size}
+/* Sized by its own column, so the title never runs into the list beside it. */
+.pf-faq__head .pf-h2{font-size:clamp(2.5rem, 15cqi, 6rem)}
+.pf-faq__lede{max-width:28rem;margin-top:.5rem;color:var(--muted)}
+.pf-faq__list{border-bottom:1px solid var(--line-strong)}
+.pf-faq__item{position:relative}
+.pf-faq__rule{position:absolute;top:0;left:0;right:0;z-index:2;height:1px;background:var(--line-strong);transform-origin:0 50%}
+.pf-faq__row{position:relative;overflow:hidden}
+.pf-faq__h{font:inherit}
+.pf-faq__q{display:grid;grid-template-columns:minmax(0, 1fr) auto;grid-template-areas:"k ic" "q ic";align-items:center;gap:.55rem 1.25rem;width:100%;padding:clamp(1.4rem, 2.4vw, 2rem) .75rem;border:0;background:none;color:var(--ink);text-align:left;cursor:pointer}
+@media (min-width: 700px){ .pf-faq__q{grid-template-columns:8.5rem minmax(0, 1fr) auto;grid-template-areas:"k q ic";gap:0 clamp(1rem, 2vw, 2rem)} }
+/* The row clips the band, so the focus ring is drawn inside it. */
+.pf .pf-faq__q:focus-visible{outline-offset:-2px}
+.pf-faq__k{grid-area:k;font-family:var(--f-mono);font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
+.pf-faq__text{grid-area:q;font-stretch:118%;font-weight:650;font-size:clamp(1.25rem, 1rem + 1vw, 1.875rem);line-height:1.15;letter-spacing:-.025em;text-wrap:balance}
+.pf-faq__ic{grid-area:ic;display:grid;place-items:center;width:2.75rem;height:2.75rem;border-radius:50%;border:1px solid var(--line-strong);transition:transform .25s var(--ease-out),background-color .2s ease,border-color .2s ease,color .2s ease}
+.pf-faq__item.is-open .pf-faq__ic{transform:rotate(45deg);border-color:var(--accent);background:var(--accent);color:var(--on-accent)}
+/* The band waits below the row until a mouse comes in; the strip inside only scrolls while the row is hot. */
+.pf-faq__band{position:absolute;inset:0;z-index:1;overflow:hidden;background:var(--faq-band);color:var(--faq-text);pointer-events:none;transform:translateY(101%)}
+.pf-faq__track{position:absolute;inset:0;display:flex;align-items:center;transform:translateY(-101%)}
+.pf-faq__mq{display:flex;align-items:center;width:max-content;animation:pfFaqMarquee 24s linear infinite paused}
+.pf-faq__row.is-hot .pf-faq__mq{animation-play-state:running}
+@keyframes pfFaqMarquee{to{transform:translateX(-50%)}}
+.pf-faq__word{padding:0 clamp(1rem, 1.8vw, 1.75rem);font-stretch:118%;font-weight:650;font-size:clamp(1.375rem, 1rem + 1.2vw, 2.125rem);line-height:1;letter-spacing:-.02em;text-transform:uppercase;white-space:nowrap}
+.pf-faq__pill{display:grid;place-items:center;flex:none;width:clamp(5.5rem, 4rem + 3vw, 7.5rem);height:clamp(2.75rem, 2.2rem + 1.2vw, 3.5rem);border-radius:999px;background:var(--faq-pill);color:var(--faq-pill-ink)}
+.pf-faq__pill svg{width:1.625rem;height:1.625rem}
+.pf-faq__a{display:grid;grid-template-rows:0fr;opacity:0;visibility:hidden;transition:grid-template-rows .2s var(--ease-out),opacity .2s var(--ease-out),visibility 0s linear .2s}
+.pf-faq__item.is-open .pf-faq__a{grid-template-rows:1fr;opacity:1;visibility:visible;transition:grid-template-rows .2s var(--ease-out),opacity .2s var(--ease-out),visibility 0s}
+.pf-faq__a-in{min-height:0;overflow:hidden}
+.pf-faq__a p{max-width:52ch;padding:0 .75rem clamp(1.5rem, 3vw, 2.25rem);color:var(--muted)}
+@media (min-width: 700px){ .pf-faq__a p{margin-left:calc(8.5rem + clamp(1rem, 2vw, 2rem))} }
+@media (prefers-reduced-motion: reduce){
+  .pf-faq__mq{animation:none}
+  .pf-faq__ic{transition-property:background-color,border-color,color}
+  .pf-faq__a,.pf-faq__item.is-open .pf-faq__a{transition-property:opacity,visibility}
+}
 
 /* ---------- Contact and footer ---------- */
 .pf-contact{padding-top:var(--section-y)}

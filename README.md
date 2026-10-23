@@ -39,10 +39,8 @@ A 3D keyboard (raw WebGL2) of the tools I use. The board flies in and lands as y
 ### Projects
 ![Projects](docs/screenshots/09-projects.jpg)
 
-### Experience
-A pinned timeline with one chapter per role: the numeral rolls over, the headline rises word by word and a progress rail fills toward the next stop.
-
-![Experience](docs/screenshots/10-experience.jpg)
+### FAQ
+Six questions for clients and hiring teams, next to a title that stays in view as you scroll. Move the mouse over a question and a pale band slides in from the edge you came in by, carrying a strip of keywords and icons that scrolls to the left; it leaves through the edge you go out by. Click a question to open its answer in place.
 
 ### Contact
 ![Contact](docs/screenshots/11-contact.jpg)
@@ -83,11 +81,12 @@ npm run preview   # serve the build locally
 | What | Where |
 | --- | --- |
 | Accent colour, default theme, loader, footer clock time zone | [src/config.js](src/config.js) |
-| Links, skills and layers, projects, experience, the tool keys | [src/content.js](src/content.js) |
+| Links, skills and layers, projects, FAQ questions and answers, the tool keys | [src/content.js](src/content.js) |
+| FAQ hover icons (Solar by 480 Design, CC BY 4.0) | [src/lib/faqIcons.js](src/lib/faqIcons.js) |
 | Contact form endpoint (`FORM_ENDPOINT`, empty for now) | [src/content.js](src/content.js) |
 | Page sections | [src/components](src/components) |
 | Scroll animation, the hero zoom and the pinned stories | [src/lib/motion.js](src/lib/motion.js) |
 | 3D keyboard and 3D layers | [src/lib/keyboard.js](src/lib/keyboard.js), [src/lib/layers.js](src/lib/layers.js) |
 | Styles | [src/styles/portfolio.css](src/styles/portfolio.css) |
 
-Some text in Projects, Experience and Contact is still placeholder content (shown in square brackets in the screenshots above) and is meant to be replaced in `src/content.js`.
+Some text in Projects, FAQ and Contact is still placeholder content (shown in square brackets in the screenshots above) and is meant to be replaced in `src/content.js`.

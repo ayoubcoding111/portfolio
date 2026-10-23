@@ -47,6 +47,7 @@ export class PortfolioMotion {
     this.pfOff = [];
     clearTimeout(this.pfPoll);
     clearTimeout(this.pfResizeTimer);
+    clearTimeout(this.pfFaqTimer);
     clearInterval(this.pfClockId);
     if (this.pfField) { this.pfField.destroy(); this.pfField = null; }
     if (this.pfHt) { this.pfHt.destroy(); this.pfHt = null; }
@@ -116,6 +117,7 @@ export class PortfolioMotion {
     }
     this.pfOn(this.pfRoot, 'click', (e) => this.pfOnLink(e));
     this.pfBindForm();
+    this.pfBindFaq();
   }
 
   pfOpenMenu() {
@@ -252,6 +254,64 @@ export class PortfolioMotion {
     });
   }
 
+  /* The FAQ: each question opens its answer in place, one at a time. With a mouse, a pale band slides over the row from
+     the edge the pointer came in by and leaves through the edge it goes out by. The strip inside moves the opposite way,
+     so it holds still while the band wipes across it, and it only scrolls (CSS) while the row is hot. Under reduced
+     motion the band fades in and out instead. Touch has no hover: a tap just opens the answer. */
+  pfBindFaq() {
+    const items = this.pfQ('[data-faq-item]').map((item) => ({
+      item,
+      q: item.querySelector('[data-faq-q]'),
+      row: item.querySelector('[data-faq-row]'),
+      band: item.querySelector('[data-faq-band]'),
+      track: item.querySelector('[data-faq-track]')
+    }));
+    const setOpen = (it, open) => {
+      it.item.classList.toggle('is-open', open);
+      it.q.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    items.forEach((it) => {
+      this.pfOn(it.q, 'click', () => {
+        const open = !it.item.classList.contains('is-open');
+        items.forEach((other) => { if (other !== it && other.item.classList.contains('is-open')) { setOpen(other, false); } });
+        setOpen(it, open);
+        // Everything below has moved, so re-measure the scroll animations once the answer has settled.
+        clearTimeout(this.pfFaqTimer);
+        this.pfFaqTimer = setTimeout(() => { if (this.pfReady && this.pfMode !== 'static') { ScrollTrigger.refresh(); } }, 260);
+      });
+
+      const { row, band, track } = it;
+      gsap.set(band, { y: 0, yPercent: 101 });
+      gsap.set(track, { y: 0, yPercent: -101 });
+      const edge = (e) => { const r = row.getBoundingClientRect(); return e.clientY < r.top + r.height / 2 ? -1 : 1; };
+      const reduce = () => this.pfMatch('(prefers-reduced-motion: reduce)');
+      this.pfOn(row, 'pointerenter', (e) => {
+        if (e.pointerType !== 'mouse') { return; }
+        row.classList.add('is-hot');
+        if (reduce()) {
+          gsap.set([band, track], { yPercent: 0 });
+          gsap.fromTo(band, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2, ease: 'power1.out', overwrite: true });
+          return;
+        }
+        // A band still on its way out just turns round; otherwise it starts from the edge the pointer crossed.
+        if (!gsap.isTweening(band)) {
+          const d = edge(e);
+          gsap.set(band, { yPercent: d * 101, autoAlpha: 1 });
+          gsap.set(track, { yPercent: -d * 101 });
+        }
+        gsap.to([band, track], { yPercent: 0, duration: 0.6, ease: 'expo.out', overwrite: true });
+      });
+      this.pfOn(row, 'pointerleave', (e) => {
+        if (e.pointerType !== 'mouse') { return; }
+        const cool = () => row.classList.remove('is-hot');
+        if (reduce()) { gsap.to(band, { autoAlpha: 0, duration: 0.2, ease: 'power1.out', overwrite: true, onComplete: cool }); return; }
+        const d = edge(e);
+        gsap.to(band, { yPercent: d * 101, duration: 0.6, ease: 'expo.out', overwrite: true, onComplete: cool });
+        gsap.to(track, { yPercent: -d * 101, duration: 0.6, ease: 'expo.out', overwrite: true });
+      });
+    });
+  }
+
   /* ---------- motion lifecycle ---------- */
   pfWaitForGsap() {
     // GSAP is bundled, so it is always here; wait a tick so React has laid the page out.
@@ -361,7 +421,7 @@ export class PortfolioMotion {
       if (nav) { nav.classList.remove('is-scrolled', 'is-hidden'); }
       this.pfQ('.pf-nav__list a[aria-current]').forEach((a) => a.removeAttribute('aria-current'));
       const cursor = this.pfOne('[data-cursor]');
-      if (cursor) { cursor.classList.remove('is-on', 'is-hover', 'is-down'); }
+      if (cursor) { cursor.classList.remove('is-on', 'is-hover', 'is-down', 'is-ink'); }
       const spot = this.pfOne('[data-spot]');
       if (spot) { spot.classList.remove('is-on'); }
     }
@@ -622,7 +682,7 @@ export class PortfolioMotion {
     this.pfSkills(gsap, ST, true);
     this.pfKeyboardCap(ST);
     this.pfProjects(gsap);
-    this.pfExperience(gsap, ST);
+    this.pfFaq(gsap);
     this.pfContact(gsap);
     this.pfFooterReveal(gsap);
     if (fine) { this.pfMagnets(gsap); this.pfNameLight(gsap); this.pfTilt(gsap); this.pfCursor(gsap); }
@@ -1158,94 +1218,15 @@ export class PortfolioMotion {
     }
   }
 
-  /* Experience as a story, one chapter per role. Wide screens pin the section and scrub through the chapters: the
-     numeral rolls over, the headline rises word by word and the rail fills toward the next stop. Narrow screens
-     keep the stacked list and reveal each chapter once. All chapters stay in the accessibility tree either way. */
-  pfExperience(gsap, ST) {
-    const sec = this.pfOne('[data-xp]');
-    if (!sec) { return; }
-    const chapters = Array.from(sec.querySelectorAll('[data-xp-ch]'));
-    if (!chapters.length) { return; }
-    const lede = sec.querySelector('.pf-xp__lede');
-    if (lede) { gsap.from(lede, { y: 24, opacity: 0, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: lede, start: 'top 87%', once: true } }); }
-    const P = chapters.map((ch) => ({
-      n: ch.querySelector('[data-xp-n]'),
-      role: ch.querySelector('[data-xp-role]'),
-      text: [ch.querySelector('.pf-xp__eyebrow'), ch.querySelector('[data-xp-desc]')]
-    }));
-    const mm = gsap.matchMedia();
-    mm.add({ wide: '(min-width: 900px)', narrow: '(max-width: 899.98px)' }, (mctx) => {
-      const words = P.map((p) => this.pfSplitWords(p.role, true));
-      const undo = () => words.forEach((s) => this.pfRevertSplit(s));
-
-      if (mctx.conditions.narrow) {
-        P.forEach((p, i) => {
-          gsap.timeline({ defaults: { ease: 'expo.out' }, scrollTrigger: { trigger: chapters[i], start: 'top 82%', once: true } })
-            .from(p.n, { yPercent: 105, duration: 1.3 }, 0)
-            .from(words[i].inners, { yPercent: 118, duration: 1.2, stagger: 0.05 }, 0.1)
-            .from(p.text, { y: 24, opacity: 0, duration: 1.2, stagger: 0.08 }, 0.2);
-        });
-        return undo;
-      }
-
-      const n = chapters.length;
-      const HOLD = 0.3;
-      const total = HOLD * 2 + (n - 1);
-      const glow = sec.querySelector('[data-xp-glow]');
-      const rail = sec.querySelector('[data-xp-rail]');
-      const fill = sec.querySelector('[data-xp-fill]');
-      const ticks = Array.from(sec.querySelectorAll('[data-xp-tick]'));
-      sec.classList.add('is-pinned');
-
-      P.slice(1).forEach((p, j) => {
-        gsap.set(p.n, { yPercent: 105 });
-        gsap.set(words[j + 1].inners, { yPercent: 118 });
-        gsap.set(p.text, { y: 24, opacity: 0 });
-      });
-
-      const tl = gsap.timeline();
-      const fx = { immediateRender: false };
-      for (let k = 0; k < n - 1; k++) {
-        const a = P[k];
-        const b = P[k + 1];
-        const t = HOLD + k;
-        const out = { ...fx, ease: 'power2.inOut' };
-        const into = { ...fx, ease: 'power3.out' };
-        tl.fromTo(a.n, { yPercent: 0 }, { ...out, yPercent: -105, duration: 0.32 }, t + 0.22)
-          .fromTo(words[k].inners, { yPercent: 0 }, { ...out, yPercent: -118, duration: 0.24, stagger: 0.02 }, t + 0.22)
-          .fromTo(a.text, { y: 0, opacity: 1 }, { ...out, y: -24, opacity: 0, duration: 0.24, stagger: 0.03 }, t + 0.24)
-          .fromTo(b.n, { yPercent: 105 }, { ...into, yPercent: 0, duration: 0.36 }, t + 0.44)
-          .fromTo(words[k + 1].inners, { yPercent: 118 }, { ...into, yPercent: 0, duration: 0.3, stagger: 0.025 }, t + 0.48)
-          .fromTo(b.text, { y: 24, opacity: 0 }, { ...into, y: 0, opacity: 1, duration: 0.3, stagger: 0.04 }, t + 0.52);
-      }
-      if (fill) { tl.fromTo(fill, { scaleX: 0 }, { ...fx, scaleX: 1, ease: 'none', duration: n - 1 }, HOLD); }
-      if (glow) { tl.fromTo(glow, { xPercent: -42, yPercent: -46, scale: 0.9 }, { xPercent: 4, yPercent: -56, scale: 1.2, ease: 'none', duration: total }, 0); }
-      tl.to({}, { duration: 0 }, total);
-
-      let active = -1;
-      const setActive = (idx) => {
-        if (idx === active) { return; }
-        active = idx;
-        ticks.forEach((tk, i) => { tk.classList.toggle('is-on', i === idx); tk.classList.toggle('is-done', i < idx); });
-      };
-      setActive(0);
-      tl.eventCallback('onUpdate', () => { setActive(Math.max(0, Math.min(n - 1, Math.round(tl.time() - HOLD)))); });
-
-      ST.create({
-        trigger: sec.querySelector('[data-xp-pin]'), pin: true, start: 'top top', anticipatePin: 1, invalidateOnRefresh: true,
-        end: () => '+=' + Math.round(this.pfWin.innerHeight * total * 0.85),
-        scrub: 0.8, animation: tl
-      });
-
-      const p0 = P[0];
-      gsap.timeline({ defaults: { ease: 'expo.out' }, scrollTrigger: { trigger: sec.querySelector('[data-xp-stage]'), start: 'top 78%', once: true } })
-        .from(p0.n, { yPercent: 105, duration: 1.4 }, 0)
-        .from(words[0].inners, { yPercent: 118, duration: 1.3, stagger: 0.06 }, 0.12)
-        .from(p0.text, { y: 24, opacity: 0, duration: 1.2, stagger: 0.08 }, 0.25)
-        .from(rail, { opacity: 0, duration: 1.2 }, 0.35);
-
-      return () => { sec.classList.remove('is-pinned'); undo(); };
-    });
+  /* The FAQ arrives once: the lede and link rise, the rules draw across and the questions follow them in. */
+  pfFaq(gsap) {
+    const list = this.pfOne('[data-faq]');
+    if (!list) { return; }
+    const intro = this.pfQ('.pf-faq__lede, .pf-faq__ask');
+    if (intro.length) { gsap.from(intro, { y: 24, opacity: 0, duration: 1.2, ease: 'expo.out', stagger: 0.08, scrollTrigger: { trigger: intro[0], start: 'top 87%', once: true } }); }
+    gsap.timeline({ defaults: { ease: 'expo.out' }, scrollTrigger: { trigger: list, start: 'top 82%', once: true } })
+      .from(list.querySelectorAll('.pf-faq__rule'), { scaleX: 0, duration: 1.4, stagger: 0.08 }, 0)
+      .from(list.querySelectorAll('.pf-faq__q'), { y: 28, opacity: 0, duration: 1.2, stagger: 0.08 }, 0.15);
   }
 
   pfContact(gsap) {
@@ -1459,6 +1440,7 @@ export class PortfolioMotion {
       const t = e.target;
       if (!t || !t.closest) { return; }
       cursor.classList.toggle('is-hover', !!t.closest('a, button, label, input, textarea, select'));
+      cursor.classList.toggle('is-ink', !!t.closest('[data-faq-row]'));
     }, false, true);
     this.pfOn(w, 'pointerdown', () => cursor.classList.add('is-down'), false, true);
     this.pfOn(w, 'pointerup', () => cursor.classList.remove('is-down'), false, true);

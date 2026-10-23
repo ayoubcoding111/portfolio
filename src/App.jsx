@@ -9,7 +9,7 @@ import About from './components/About.jsx';
 import Skills from './components/Skills.jsx';
 import Stack from './components/Stack.jsx';
 import Projects from './components/Projects.jsx';
-import Experience from './components/Experience.jsx';
+import Faq from './components/Faq.jsx';
 import Contact from './components/Contact.jsx';
 import Footer from './components/Footer.jsx';
 
@@ -61,7 +61,7 @@ export default function App() {
         <Skills />
         <Stack theme={effective} />
         <Projects />
-        <Experience />
+        <Faq />
         <Contact />
       </main>
       <Footer />

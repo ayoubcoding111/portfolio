@@ -1,5 +1,6 @@
 import { siReact, siJavascript, siTypescript, siHtml5, siCss, siTailwindcss, siNodedotjs, siNextdotjs, siExpress, siMongodb,
   siPostgresql, siGit, siGithub, siDocker, siFigma } from 'simple-icons';
+import { FAQ_ICONS } from './lib/faqIcons.js';
 
 /* Everything you'll want to edit lives here. Items marked PLACEHOLDER still need your real details. */
 
@@ -20,7 +21,7 @@ export const SECTIONS = [
   { id: 'skills', label: 'Skills' },
   { id: 'stack', label: 'Stack' },
   { id: 'projects', label: 'Projects' },
-  { id: 'experience', label: 'Experience' },
+  { id: 'faq', label: 'FAQ' },
   { id: 'contact', label: 'Contact' }
 ];
 
@@ -47,15 +48,32 @@ export const PROJECTS = [
   { id: 'p4', tag: 'Placeholder', title: '[Work or client project]', summary: '[One line: your role and the result.]', stack: ['[Tech]', '[Tech]', '[Tech]'], demo: 'https://example.com', repo: LINKS.github, srName: 'project 4' }
 ];
 
-/* PLACEHOLDER: your roles, newest first */
-export const EXPERIENCE_INTRO = 'Scroll back through the years: where I am now, and the steps that got me here.';
+/* PLACEHOLDER: drafted answers. Fill in each [bracket] with your own details, and rewrite any answer that doesn't sound
+   like you. label: the small tag before the question. tags: the words and icons that scroll past when a mouse is over
+   the row (the icons are in lib/faqIcons.js). */
+export const FAQ_INTRO = 'What clients and hiring teams usually ask before we work together. Don’t see your question?';
 
-/* beat: the chapter's label in the scroll story. */
-export const EXPERIENCE = [
-  { beat: 'Now', when: '[2024] – Present', role: '[Role] at [Company]', desc: '[What you built and the result, in one or two lines.]' },
-  { beat: 'Before that', when: '[2022] – [2024]', role: '[Role] at [Company]', desc: '[What you owned, shipped or improved.]' },
-  { beat: 'Earlier', when: '[2020] – [2022]', role: '[Role] at [Company]', desc: '[A project or responsibility worth mentioning.]' },
-  { beat: 'The start', when: '[Year]', role: '[Degree or certificate], [School]', desc: '[Optional: a focus area or award.]' }
+const tag = (word, icon) => ({ word, icon });
+
+export const FAQ = [
+  { id: 'faq-pricing', label: 'Pricing', q: 'How do you price a project?',
+    a: 'Once the scope is clear, after a short call and a written brief, you get a fixed quote. Open-ended work, like a long-running product or a steady stream of features, is billed weekly instead. [Add a starting price or day rate here if you want to show one.]',
+    tags: [tag('Fixed quote', FAQ_ICONS.billList), tag('Clear scope', FAQ_ICONS.checklistMinimalistic), tag('Weekly billing', FAQ_ICONS.calendar)] },
+  { id: 'faq-timeline', label: 'Timeline', q: 'How long does a project take?',
+    a: 'It depends on the scope. A focused marketing site usually takes [2–4] weeks, and a web app with accounts, data and an admin area [6–12]. Before I start you get a plan with milestones, and every week a working preview you can click through.',
+    tags: [tag('Discovery', FAQ_ICONS.magnifier), tag('Weekly previews', FAQ_ICONS.eye), tag('Launch', FAQ_ICONS.rocket2)] },
+  { id: 'faq-remote', label: 'Remote', q: 'Do you work remotely, and in which time zone?',
+    a: 'Yes. I’m based in Algeria (GMT+1), so my working day overlaps with Europe’s. [Add any other hours you cover, like the US East Coast morning.] Progress is written down as I go, so work keeps moving between calls.',
+    tags: [tag('Based in Algeria', FAQ_ICONS.mapPoint), tag('GMT+1', FAQ_ICONS.clockCircle), tag('Written updates', FAQ_ICONS.chatRoundDots)] },
+  { id: 'faq-stack', label: 'Stack', q: 'Which technologies do you work with?',
+    a: 'Mostly TypeScript from end to end: React and Next.js in the browser, Node.js with Express or NestJS on the server, PostgreSQL or MongoDB for data, shipped with Docker and GitHub Actions. If your team already has a stack, I’ll work in yours.',
+    tags: [tag('TypeScript', FAQ_ICONS.codeSquare), tag('APIs', FAQ_ICONS.server), tag('Databases', FAQ_ICONS.database)] },
+  { id: 'faq-hiring', label: 'Hiring', q: 'Are you open to a full-time role?',
+    a: '[Yes, for the right team. / Freelance only for now.] In a team I’m at home with code review, tickets and shared conventions, and I like owning a feature from the database up to the interface. [Say whether you’d relocate or only work remotely.]',
+    tags: [tag('Full-time', FAQ_ICONS.caseRound), tag('Code review', FAQ_ICONS.programming), tag('Teamwork', FAQ_ICONS.usersGroupRounded)] },
+  { id: 'faq-support', label: 'Support', q: 'What happens after launch?',
+    a: 'You get the code, the accounts and short docs on how to run and change it, all in your name. [I fix bugs for the first N weeks at no cost], and I can stay on for maintenance or new features after that.',
+    tags: [tag('Your code', FAQ_ICONS.key), tag('Clear docs', FAQ_ICONS.documentText), tag('Maintenance', FAQ_ICONS.settingsMinimalistic)] }
 ];
 
 /* The Stack: one key each, in keyboard order (three rows of 6, 5 and 5). Logos are Simple Icons (CC0, simpleicons.org).
