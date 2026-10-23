@@ -407,7 +407,97 @@ export class PortfolioMotion {
     return split;
   }
 
+  /* Split el into words for animation, keeping its accessible name: a hidden copy of the text stays in place and the
+     visible words are aria-hidden. pfRevertSplit puts everything back. */
+  pfSplitHidden(el) {
+    const label = el.textContent;
+    const split = this.pfSplitWords(el, false);
+    const sr = this.pfDoc.createElement('span');
+    sr.className = 'pf-sr';
+    sr.textContent = label;
+    el.insertBefore(sr, el.firstChild);
+    split.cleanup = () => { if (sr.parentNode) { sr.parentNode.removeChild(sr); } };
+    split.words.forEach((word) => { word.setAttribute('aria-hidden', 'true'); word.classList.add('pf-dw'); });
+    return split;
+  }
+
+  /* Blur-and-drift text. Each word is a state { q } running 0 to 1: it sharpens out of a blur while it drifts dx pixels
+     sideways into place. Tween q (any ease, any scrub), then call arr.render() to paint the words. */
+  pfFocus(el, dx) {
+    const split = this.pfSplitHidden(el);
+    const states = split.words.map((word) => ({ q: 0, last: NaN, word: word }));
+    const paint = (s) => {
+      if (s.q === s.last) { return; }
+      s.last = s.q;
+      const q = pfClamp(s.q, 0, 1);
+      const w = s.word;
+      if (q >= 1) { w.style.filter = ''; w.style.opacity = ''; w.style.transform = ''; return; }
+      const e = 1 - Math.pow(1 - q, 3);
+      const blur = (1 - e) * 8;
+      w.style.filter = blur > 0.2 ? 'blur(' + blur.toFixed(2) + 'px)' : '';
+      w.style.opacity = pfClamp(q * 2.2, 0, 1).toFixed(3);
+      w.style.transform = 'translate3d(' + (dx * (1 - e)).toFixed(2) + 'px,0,0)';
+    };
+    states.render = () => { states.forEach(paint); };
+    states.render();
+    return states;
+  }
+
+  /* Blur-and-decode text. Each word is a state { q } running 0 to 1: its letters flicker through look-alike glyphs and lock
+     in left to right while the word sharpens out of a blur. Tween q (any ease, any scrub), then call arr.render() to paint the words.
+     The real text is restored at q = 1 and words keep their measured width while they flicker so nothing around them shifts. */
+  pfDecode(el) {
+    const split = this.pfSplitHidden(el);
+    const LOWER = 'abcdefghijklmnopqrstuvwxyz';
+    const UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const MARKS = '#%&*+=/<>_';
+    const FRAMES = 26;
+    const states = split.words.map((word, wi) => {
+      return { q: 0, last: NaN, key: -1, word: word, text: word.textContent, seed: (wi + 1) * 7919 };
+    });
+    const paint = (s) => {
+      if (s.q === s.last) { return; }
+      s.last = s.q;
+      const q = pfClamp(s.q, 0, 1);
+      const w = s.word;
+      if (q >= 1) {
+        if (s.key !== -1) { s.key = -1; w.textContent = s.text; w.style.width = ''; w.style.filter = ''; w.style.opacity = ''; }
+        return;
+      }
+      if (s.key === -1) {
+        // Leaving the resting state: measure the real word, then hold that width while its letters change.
+        w.textContent = s.text;
+        w.style.width = w.getBoundingClientRect().width.toFixed(2) + 'px';
+        s.key = -2;
+      }
+      const key = Math.floor(q * FRAMES);
+      if (key !== s.key) {
+        s.key = key;
+        const n = s.text.length;
+        let out = '';
+        for (let i = 0; i < n; i++) {
+          const ch = s.text.charAt(i);
+          if (!/[A-Za-z0-9]/.test(ch) || q >= 0.15 + 0.8 * (i + 1) / n) { out += ch; continue; }
+          const h = (Math.imul(i + 1, 2654435761) ^ Math.imul(key + 1, 40503) ^ s.seed) >>> 0;
+          if (h % 4 === 0) { out += MARKS.charAt((h >>> 3) % MARKS.length); }
+          else { const pool = /[A-Z]/.test(ch) ? UPPER : LOWER; out += pool.charAt((h >>> 3) % pool.length); }
+        }
+        w.textContent = out;
+      }
+      const e = 1 - Math.pow(1 - q, 3);
+      const blur = (1 - e) * 9;
+      w.style.filter = blur > 0.2 ? 'blur(' + blur.toFixed(2) + 'px)' : '';
+      w.style.opacity = pfClamp(q * 3, 0, 1).toFixed(3);
+    };
+    // Paints whatever q now holds. Call it from the tween's onUpdate and onComplete, or from a scrubbed timeline's own
+    // onUpdate, so a jump straight to the end can't leave a word half-decoded.
+    states.render = () => { states.forEach(paint); };
+    states.render();
+    return states;
+  }
+
   pfRevertSplit(split) {
+    if (split.cleanup) { split.cleanup(); split.cleanup = null; }
     split.records.forEach((r) => {
       const first = r.created[0];
       if (first && first.parentNode === r.parent) { r.parent.insertBefore(r.node, first); }
@@ -422,8 +512,9 @@ export class PortfolioMotion {
     return sc && sc !== this.pfWin ? sc.clientHeight : this.pfWin.innerHeight;
   }
 
-  /* Speed limit. Through the hero's scroll range the scroll target can only run a short way ahead of where the page is, so
-     the zoom plays at a steady, cinematic pace however hard the wheel is spun. Everywhere else the same limit applies at
+  /* Speed limit. Through the hero's scroll range, the Skills story and the keyboard's flight (the capped ranges, kept in
+     pfCaps) the scroll target can only run a short way ahead of where the page is, so each plays at a steady, cinematic pace
+     however hard the wheel is spun. Everywhere else the same limit applies at
      PF_SITE_STRICTNESS of the hero's strength (0.3: the target may lead about 3.3 times as far), so the page still feels
      weighted but a fast flick gets somewhere. Nothing scrolls by itself, and a gentle scroll is untouched. Lenis calls
      this for every wheel event and applies deltaY after. */
@@ -434,7 +525,7 @@ export class PortfolioMotion {
     const a = lenis.animatedScroll;
     const t0 = lenis.targetScroll;
     const t1 = t0 + data.deltaY;
-    const cap = this.pfInHeroCap(a, t1) ? this.pfHeroCap.cap() : this.pfSiteCap();
+    const cap = this.pfCapFor(a, t1);
     if (Math.abs(t1 - a) <= cap) { return true; }
     let d = a + pfClamp(t1 - a, -cap, cap) - t0;
     // A zero delta would let the browser scroll natively, so keep it a hair off zero.
@@ -443,9 +534,60 @@ export class PortfolioMotion {
     return true;
   }
 
-  pfInHeroCap(a, t) {
-    const lim = this.pfHeroCap;
-    return !!lim && !(Math.max(a, t) < -1 || Math.min(a, t) > lim.end() + lim.pad());
+  /* The capped range the scroll between a and t touches, with a run-up of three caps either side so a flick that starts
+     just outside can't launch into it (a range's after() replaces the run-up past its end); null elsewhere. A range is
+     { start(), end(), cap(), after?() } in scroll pixels. */
+  pfCapAt(a, t) {
+    const lo = Math.min(a, t);
+    const hi = Math.max(a, t);
+    const caps = this.pfCaps || [];
+    for (let i = 0; i < caps.length; i++) {
+      const c = caps[i];
+      const pad = c.cap() * 3;
+      const after = c.after ? c.after() : pad;
+      if (!(hi < c.start() - pad || lo > c.end() + after)) { return c; }
+    }
+    return null;
+  }
+
+  // How far the scroll target may lead the page where the scroll between a and t is: the range's own limit, else the site-wide one.
+  pfCapFor(a, t) {
+    const range = this.pfCapAt(a, t);
+    return range ? range.cap() : this.pfSiteCap();
+  }
+
+  pfAddCap(range) {
+    if (!this.pfCaps) { this.pfCaps = []; }
+    this.pfCaps.push(range);
+    this.pfMotionOff.push(() => { this.pfCaps = (this.pfCaps || []).filter((c) => c !== range); });
+  }
+
+  // How far the scroll target may lead the page inside a capped range, as a share of the screen's height (the one number to
+  // raise or lower to speed up or slow down the hero, the Skills story and the keyboard's flight together).
+  pfCapPx() { return Math.max(100, this.pfViewH() * 0.17); }
+
+  /* The keyboard's flight is driven by scroll position (lib/keyboard.js): it begins when the section's top is 1.55 screens
+     down and lands when the stage's centre reaches 55% of the screen's height. Cap the scroll across that stretch. */
+  pfKeyboardCap(ST) {
+    const sec = this.pfOne('.pf-kb');
+    const stage = this.pfOne('.pf-kb__stage');
+    if (!this.pfLenis || !sec || !stage) { return; }
+    const w = this.pfWin;
+    let range = null;
+    const measure = () => {
+      const sc = this.pfScroller;
+      const y = sc && sc !== w ? sc.scrollTop : w.pageYOffset;
+      const vh = this.pfViewH();
+      const top = sec.getBoundingClientRect().top + y;
+      const mid = stage.getBoundingClientRect().top + y + stage.offsetHeight / 2;
+      return { start: top - vh * 1.55, end: mid - vh * 0.55 };
+    };
+    const get = () => range || (range = measure());
+    const stale = () => { range = null; };
+    ST.addEventListener('refresh', stale);
+    this.pfMotionOff.push(() => ST.removeEventListener('refresh', stale));
+    // The slow limit ends the moment it has landed (no run-up past the end); the site-wide limit takes over below it.
+    this.pfAddCap({ start: () => get().start, end: () => get().end, cap: () => this.pfCapPx(), after: () => 0 });
   }
 
   // The rest of the site: the hero's allowed lead divided by PF_SITE_STRICTNESS.
@@ -464,13 +606,12 @@ export class PortfolioMotion {
       gsap.ticker.add(this.pfRaf);
       gsap.ticker.lagSmoothing(0);
       this.pfLenis = lenis;
-      // Outside the hero, trim any lead a flick left over to the site-wide limit (the hero trims its own range).
+      // Trim any lead a flick left over to the limit of the range it is in, or the site-wide one outside them all.
       lenis.on('scroll', (l) => {
         if (l.isScrolling !== 'smooth' || performance.now() < (this.pfNavUntil || 0)) { return; }
         const a = l.animatedScroll;
-        if (this.pfInHeroCap(a, a)) { return; }
         const lead = l.targetScroll - a;
-        const cap = this.pfSiteCap();
+        const cap = this.pfCapFor(a, a);
         if (Math.abs(lead) > cap + 1) { lenis.scrollTo(a + Math.sign(lead) * cap, { programmatic: false }); }
       });
     }
@@ -479,6 +620,7 @@ export class PortfolioMotion {
     this.pfHeadings(gsap);
     this.pfAbout(gsap);
     this.pfSkills(gsap, ST, true);
+    this.pfKeyboardCap(ST);
     this.pfProjects(gsap);
     this.pfExperience(gsap, ST);
     this.pfContact(gsap);
@@ -607,28 +749,14 @@ export class PortfolioMotion {
     // The hero's own background (the dots, faded in the scroll callback above, and the soft glow behind the name) clears
     // just before About's text arrives, so the section shows on a clean page inside the O.
     out.fromTo(nameEl, { '--name-glow': 1 }, { '--name-glow': 0, duration: 0.2 }, SHOW - 0.2);
-    // The hero lets go in the last stretch, just as the top of About's text meets the bottom edge of the screen.
-    // fromTo so it never reads the intro's half-faded start value
-    out.fromTo(this.pfQ('.pf-hero__role, .pf-hero__foot'), { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.07, immediateRender: false }, 0.01);
+    // The role, lede and buttons stay solid and ride the zoom with the name; the whole plane lets go only in the last stretch,
+    // just as the top of About's text meets the bottom edge of the screen.
     out.fromTo(inner, { scale: 1 }, { scale: () => zoom.s, duration: 1, ease: zoomEase, force3D: false }, 0)
       .to(inner, { autoAlpha: 0, duration: 0.05 }, 0.95);
     // Speed limit: through the hero (and a short run-up to it) the scroll target may only lead the page by this much, which
     // caps the pace at roughly 600px a second, so the zoom takes about two seconds however hard the wheel is spun. Wheel
-    // events are trimmed in pfCapWheel; this trims whatever lead is left over (it also covers a flick that started below).
-    if (this.pfLenis) {
-      const lenis = this.pfLenis;
-      const capPx = () => Math.max(80, this.pfViewH() * 0.13);
-      this.pfHeroCap = { end: scrollLen, cap: capPx, pad: () => capPx() * 3 };
-      const off = lenis.on('scroll', (l) => {
-        if (l.isScrolling !== 'smooth' || performance.now() < (this.pfNavUntil || 0)) { return; }
-        const a = l.animatedScroll;
-        if (a < -1 || a > scrollLen() + capPx() * 3) { return; }
-        const lead = l.targetScroll - a;
-        const cap = capPx();
-        if (Math.abs(lead) > cap + 1) { lenis.scrollTo(a + Math.sign(lead) * cap, { programmatic: false }); }
-      });
-      this.pfMotionOff.push(() => { off(); this.pfHeroCap = null; });
-    }
+    // events are trimmed in pfCapWheel and whatever lead is left over in the scroll listener (see pfCinematic).
+    if (this.pfLenis) { this.pfAddCap({ start: () => 0, end: scrollLen, cap: () => this.pfCapPx() }); }
     return playIntro;
   }
 
@@ -709,9 +837,11 @@ export class PortfolioMotion {
 
   pfHeadings(gsap) {
     this.pfQ('[data-split]').forEach((el) => {
-      const split = this.pfSplitWords(el, true);
-      gsap.from(split.inners, {
-        yPercent: 118, duration: 1.4, ease: 'expo.out', stagger: 0.07,
+      // data-split="focus": the words only sharpen out of a blur, with no scrambling (the Contact title).
+      const calm = el.getAttribute('data-split') === 'focus';
+      const words = calm ? this.pfFocus(el, 0) : this.pfDecode(el);
+      gsap.to(words, {
+        q: 1, duration: calm ? 1.1 : 1, ease: calm ? 'power2.out' : 'none', stagger: 0.09, onUpdate: words.render, onComplete: words.render,
         scrollTrigger: { trigger: el, start: 'top 87%', once: true }
       });
     });
@@ -756,7 +886,10 @@ export class PortfolioMotion {
     // Unpinned, the title and intro reveal like every other heading; pinned, the story's timeline owns them, so nothing
     // else can bring them back over a later chapter.
     const revealHead = () => {
-      if (title) { gsap.from(this.pfSplitWords(title, true).inners, { yPercent: 118, duration: 1.4, ease: 'expo.out', stagger: 0.07, scrollTrigger: { trigger: title, start: 'top 87%', once: true } }); }
+      if (title) {
+        const words = this.pfDecode(title);
+        gsap.to(words, { q: 1, duration: 1, ease: 'none', stagger: 0.09, onUpdate: words.render, onComplete: words.render, scrollTrigger: { trigger: title, start: 'top 87%', once: true } });
+      }
       if (intro) { gsap.from(intro, { y: 28, opacity: 0, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: intro, start: 'top 88%', once: true } }); }
     };
     const revealList = () => gsap.from(items, { y: 40, opacity: 0, duration: 1.3, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: items[0] || sec, start: 'top 85%', once: true } });
@@ -862,23 +995,27 @@ export class PortfolioMotion {
     this.pfLxEnd = null;
     this.pfLxAnchors = null;
 
-    // Each chapter's headline rises word by word out of a mask, and the rest of it follows.
-    const lines = chapters.concat(outro).map((ch) => this.pfSplitWords(ch.querySelector('[data-lx-line]'), true).inners);
+    // Each chapter's headline sharpens out of a blur word by word, drifting in from the outer edge (the chapters alternate
+    // sides, the closing line sits on the right), and the rest of it follows. The section title alone decodes (pfDecode).
+    const lines = chapters.concat(outro).map((ch, i) => this.pfFocus(ch.querySelector('[data-lx-line]'), i < 4 && i % 2 === 0 ? -18 : 18));
     const rests = chapters.map((ch) => ch.querySelectorAll('.pf-lx__eyebrow, .pf-lx__ctext, .pf-chip'));
-    const headWords = title ? this.pfSplitWords(title, true).inners : [];
-    // Parked below their masks (and the rest hidden) up front, so a staggered reveal never shows a word before its turn.
-    gsap.set([].concat.apply([], lines), { yPercent: 112 });
+    const headWords = title ? this.pfDecode(title) : [];
+    // The words start blurred and unseen (q = 0 is painted up front) and the rest is hidden up front, so a staggered reveal never shows a word before its turn.
+    const wordsIn = (words, at, duration, stagger) => tl.fromTo(words, { q: 0 }, { q: 1, duration, ease: 'none', stagger, immediateRender: false }, at);
+    const wordsOut = (words, at, duration, stagger) => tl.fromTo(words, { q: 1 }, { q: 0, duration, ease: 'none', stagger, immediateRender: false }, at);
     gsap.set([].concat.apply([], rests.map((r) => Array.prototype.slice.call(r))), { autoAlpha: 0 });
     gsap.set(labs, { autoAlpha: 0, x: -16 });
     gsap.set([rail, click], { autoAlpha: 0 });
-    tl = gsap.timeline({ defaults: { ease: 'none' }, onUpdate: sync });
+    // The timeline repaints every decoding headline after each render, wherever the scrub landed.
+    const decodes = lines.concat([headWords]);
+    tl = gsap.timeline({ defaults: { ease: 'none' }, onUpdate: () => { sync(); decodes.forEach((d) => { if (d.render) { d.render(); } }); } });
     const chIn = (i, at) => {
       tl.set(chapters[i], { autoAlpha: 1 }, at);
-      tl.fromTo(lines[i], { yPercent: 112 }, { yPercent: 0, duration: 0.42, ease: 'power3.out', stagger: 0.035, immediateRender: false }, at);
+      wordsIn(lines[i], at, 0.5, 0.04);
       tl.fromTo(rests[i], { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.32, ease: 'power2.out', stagger: 0.025, immediateRender: false }, at + 0.12);
     };
     const chOut = (i, at) => {
-      tl.to(lines[i], { yPercent: -112, duration: 0.28, ease: 'power2.in', stagger: 0.015 }, at);
+      wordsOut(lines[i], at, 0.26, 0.015);
       tl.to(rests[i], { autoAlpha: 0, y: -10, duration: 0.22, ease: 'power2.in' }, at);
       tl.set(chapters[i], { autoAlpha: 0 }, at + 0.3);
     };
@@ -888,11 +1025,11 @@ export class PortfolioMotion {
     tl.fromTo(S,
       { rise: -1.7, yaw: -1.7, explode: 0, zoom: 0.92, look: 1.5, tilt: 0, fx: 0.68, fy: 0.54 },
       { rise: 0, yaw: -1.08, explode: 0.06, zoom: 0.92, look: 1.5, tilt: 0, fx: 0.68, fy: 0.54, duration: E, ease: 'power1.out' }, 0);
-    if (headWords.length) { tl.fromTo(headWords, { yPercent: 118 }, { yPercent: 0, duration: 0.55, ease: 'power3.out', stagger: 0.06 }, E * 0.4); }
+    if (headWords.length) { wordsIn(headWords, E * 0.4, 0.6, 0.07); }
     if (intro) { tl.fromTo(intro, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: 'power2.out' }, E * 0.55); }
     // It opens, and the title steps aside.
     tl.to(S, { explode: 1, yaw: -0.74, duration: 0.95, ease: 'power2.inOut' }, T(0));
-    if (headWords.length) { tl.fromTo(headWords, { yPercent: 0 }, { yPercent: -112, duration: 0.32, ease: 'power2.in', stagger: 0.02, immediateRender: false }, T(0.7)); }
+    if (headWords.length) { wordsOut(headWords, T(0.7), 0.3, 0.02); }
     if (intro) { tl.fromTo(intro, { autoAlpha: 1, y: 0 }, { autoAlpha: 0, y: -16, duration: 0.28, ease: 'power2.in', immediateRender: false }, T(0.72)); }
     tl.to(rail, { autoAlpha: 1, duration: 0.3 }, T(0.9));
 
@@ -946,12 +1083,12 @@ export class PortfolioMotion {
     tl.to(labs, { autoAlpha: 1, x: 0, duration: 0.4, ease: 'power3.out', stagger: 0.08 }, R + 0.85);
     for (let i = 0; i < 4; i++) { tl.to(draw, { ['l' + i]: 1, duration: 0.4, ease: 'power2.out' }, R + 0.95 + i * 0.08); }
     tl.set(outro, { autoAlpha: 1 }, R + 1);
-    tl.fromTo(lines[4], { yPercent: 112 }, { yPercent: 0, duration: 0.45, ease: 'power3.out', stagger: 0.02, immediateRender: false }, R + 1);
+    wordsIn(lines[4], R + 1, 0.5, 0.03);
 
     // Close: the labels, the line and the beam go, and the stack shuts before the keyboard flies in.
     const C = T(7.2);
     tl.to(S, { beam: 0, duration: 0.35, ease: 'power1.in' }, C);
-    tl.to(lines[4], { yPercent: -112, duration: 0.3, ease: 'power2.in', stagger: 0.012 }, C);
+    wordsOut(lines[4], C, 0.28, 0.012);
     tl.set(outro, { autoAlpha: 0 }, C + 0.32);
     tl.to(labs, { autoAlpha: 0, x: -12, duration: 0.3, ease: 'power2.in', stagger: { each: 0.05, from: 'end' } }, C);
     for (let i = 0; i < 4; i++) { tl.to(draw, { ['l' + i]: 0, duration: 0.3, ease: 'power2.in' }, C + (3 - i) * 0.05); }
@@ -960,7 +1097,10 @@ export class PortfolioMotion {
     tl.to({}, { duration: 0.1 }, C + 0.8);
 
     const pinLen = () => Math.round(this.pfViewH() * PIN);
-    ST.create({ trigger: pinEl, start: 'top bottom', end: () => '+=' + (this.pfViewH() + pinLen()), scrub: 1, animation: tl, invalidateOnRefresh: true });
+    const story = ST.create({ trigger: pinEl, start: 'top bottom', end: () => '+=' + (this.pfViewH() + pinLen()), scrub: 1, animation: tl, invalidateOnRefresh: true });
+    // The story gets the hero's speed limit across its whole run (the screen before the pin, and the pin), so the chapters
+    // can't be flicked past.
+    if (this.pfLenis) { this.pfAddCap({ start: () => story.start, end: () => story.end, cap: () => this.pfCapPx() }); }
     ST.create({ trigger: pinEl, start: 'top top', end: () => '+=' + pinLen(), pin: true, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1, onRefresh: measure });
     layers.onFrame = (a) => { this.pfLxAnchors = a; place(a); };
     measure();

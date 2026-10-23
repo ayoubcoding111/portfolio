@@ -95,14 +95,8 @@ const ROWS = 4;
 const CASE_PAD = 0.38;
 const CASE_DEPTH = 0.42;
 const FOV = (26 * Math.PI) / 180;
-/* Fastest the fly-in may play, in flights per second: a full flight takes at least ~1.4 s however fast the scroll. */
-const FLIGHT_SPEED = 0.7;
-/* Slowest it settles, in flights per second, so the last stretch lands crisply instead of creeping in. */
-const FLIGHT_MIN_SPEED = 0.35;
-/* How far into the flight the roll starts (0 = board enters, 1 = touchdown); it always ends at the touchdown. */
-const FLIP_START = 0.55;
 /* How far the landed board sits above the stage's centre, as a fraction of the stage's height. */
-const RAISE = 0.12;
+const RAISE = 0.16;
 
 /* Finishes: 0 tool cap, 1 modifier, 2 accent, 3 case. */
 const THEMES = {
@@ -544,8 +538,6 @@ export function createKeyboard(stage, canvas, opts) {
   const ripples = [];
   const started = performance.now();
   const section = stage.closest('section') || stage;
-  const head = section.querySelector('.pf-kb__head') || stage;
-  const nav = document.querySelector('.pf-nav__inner');
   let last = started;
   let hover = -1;
   let held = -1;
@@ -608,23 +600,18 @@ export function createKeyboard(stage, canvas, opts) {
   };
 
   // ---- input
-  // Touch has no hover: a tap presses the key and keeps it selected (its card stays up) until another tap moves on.
-  const onPointerMove = (e) => {
-    if (e.pointerType !== 'mouse') { return; }
-    pointer.inside = true; pointer.cx = e.clientX; pointer.cy = e.clientY;
-  };
-  const onPointerLeave = (e) => { if (e.pointerType !== 'mouse') { return; } pointer.inside = false; hover = -1; held = -1; };
+  const onPointerMove = (e) => { pointer.inside = true; pointer.cx = e.clientX; pointer.cy = e.clientY; };
+  const onPointerLeave = () => { pointer.inside = false; hover = -1; held = -1; };
   const onPointerDown = (e) => {
     if (e.button !== 0 && e.pointerType === 'mouse') { return; }
-    if (e.pointerType === 'mouse') { pointer.inside = true; pointer.cx = e.clientX; pointer.cy = e.clientY; }
+    pointer.inside = true; pointer.cx = e.clientX; pointer.cy = e.clientY;
     held = pick(e.clientX, e.clientY);
   };
   const onPointerUp = (e) => {
     const i = pick(e.clientX, e.clientY);
-    const tap = e.pointerType !== 'mouse';
-    if (held >= 0 && i === held) { press(i); if (tap) { selected = caps[i].tool !== undefined ? i : -1; } }
-    else if (tap && i < 0) { selected = -1; }
+    if (held >= 0 && i === held) { press(i); }
     held = -1;
+    if (e.pointerType !== 'mouse') { pointer.inside = false; hover = -1; }
   };
   const onPointerCancel = () => { held = -1; };
   // The stage's own pointerup runs first (and fires the press); this only clears a press released elsewhere.
@@ -661,13 +648,14 @@ export function createKeyboard(stage, canvas, opts) {
   stage.addEventListener('keyup', onKeyUp);
   stage.addEventListener('blur', onBlur);
 
-  // Run while the section is on screen or up to two screens below it (the flight starts over the section above).
+  // Run while the section is on screen or up to a screen and a half below it (the flight starts over the section above).
   const io = new IntersectionObserver((entries) => {
     visible = entries[0].isIntersecting;
     if (!disposed && !raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
-  }, { rootMargin: '0px 0px 220% 0px' });
+  }, { rootMargin: '0px 0px 160% 0px' });
   io.observe(section);
 
+  const easeInOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
   const YAW = (30 * Math.PI) / 180;
 
   const clearAll = () => {
@@ -691,53 +679,39 @@ export function createKeyboard(stage, canvas, opts) {
     const W = canvas.width, H = canvas.height;
     if (!W || !H) { raf = requestAnimationFrame(frame); return; }
     const vw = canvas.clientWidth, vh = canvas.clientHeight;
-    const sr = (stage.querySelector('.pf-kb__board') || stage).getBoundingClientRect();
+    const sr = stage.getBoundingClientRect();
     const secTop = section.getBoundingClientRect().top;
 
-    // ---- the flight, driven by scroll. While the section above is still on screen (this section's top 2 screens down)
-    // the board comes in keys up from beyond the right edge of the screen, at mid height, then grows, rolls over once
-    // (finishing as it touches down) and turns 30° to the left, landing on the stage as this section's heading reaches the
-    // top of the screen, just under the nav. Scrolling back reverses it.
-    // It trails the scroll softly and never moves faster than FLIGHT_SPEED, so a fast flick still plays the whole flight;
-    // near the end it keeps at least FLIGHT_MIN_SPEED, so the board arrives with speed instead of drifting in.
+    // ---- the flight, driven by scroll. While the section above is still on screen (this section's top 1.55 screens down)
+    // the board comes in from beyond the right edge of the screen, low down, then grows, rolls over once and turns 30° to
+    // the left, landing on the stage as the stage's centre reaches 55% of the screen's height. Scrolling back reverses it.
     const cNow = sr.top + sr.height / 2;
-    const c0 = vh * 2 + (sr.top - secTop) + sr.height / 2;
-    const navH = nav ? nav.getBoundingClientRect().height : 72;
-    const cEnd = navH + 16 + (sr.top - head.getBoundingClientRect().top) + sr.height / 2;
+    const c0 = vh * 1.55 + (sr.top - secTop) + sr.height / 2;
+    const cEnd = vh * 0.55;
     const goalFlight = reduced ? 1 : clamp((c0 - cNow) / Math.max(c0 - cEnd, 1), 0, 1);
-    const diff = goalFlight - flight;
-    let step = diff * (1 - Math.exp(-dt * 4.5));
-    const minStep = Math.min(Math.abs(diff), FLIGHT_MIN_SPEED * dt);
-    if (Math.abs(step) < minStep) { step = Math.sign(diff) * minStep; }
-    const maxStep = FLIGHT_SPEED * dt;
-    flight += clamp(step, -maxStep, maxStep);
+    flight += (goalFlight - flight) * (1 - Math.exp(-dt * 14));
     if (Math.abs(goalFlight - flight) < 0.0005) { flight = goalFlight; }
-    // ---- touchdown: the frame the board lands starts the impact (a squash and rebound, a wave of light and bounce out
-    // from the centre of the keys, a ring across the floor glow). Flying back up re-arms it.
-    if (flight >= 0.995 && !touched) {
+    // ---- touchdown: the frame the board lands starts the impact (a squash and rebound, a wave of light and bounce out from
+    // the centre of the keys, a ring across the floor glow). Flying back up re-arms it.
+    const eLand = easeInOut(flight);
+    // The ease-out means the board is visually down well before the flight value reaches 1, so it triggers on position.
+    if (eLand >= 0.97 && !touched) {
       touched = true;
       impactT0 = now;
       ripples.push({ x: 0, z: 0, t0: now, amp: 1.8, light: true });
     }
-    if (flight < 0.9 && !reduced) { touched = false; }
+    if (eLand < 0.85 && !reduced) { touched = false; }
     const it = now - impactT0;
     const squash = it < 1.2 ? Math.exp(-it * 5) * Math.sin(it * 16) : 0;
     const sx = 1 + squash * 0.06, sy = 1 - squash * 0.22, drop = -squash * 0.12;
     const appear = 1;
-    // Eases in and arrives at full speed, so the landing reads as a touchdown.
-    const e = 1 - Math.cos((flight * Math.PI) / 2);
+    const e = easeInOut(flight);
     const sw = clamp(sr.width * 0.3, 180, 380);
     const sh = sw * (sr.height / Math.max(sr.width, 1));
-    const start = { l: vw + vw * 0.02, t: vh * 0.4 - sh / 2 };
-    // Early on the stage is still below the screen, so aim first at where it will sit when it lands and hand over to the
-    // stage itself as the flight ends: the whole flight stays in view and never hovers over the heading.
-    // The board settles RAISE of the stage's height above the stage's centre, closer to the heading.
-    const top = sr.top - sr.height * RAISE;
-    const landTop = cEnd - sr.height / 2 - sr.height * RAISE;
-    const toTop = Math.min(top, landTop + (top - landTop) * e);
+    const start = { l: vw + vw * 0.02, t: vh * 0.7 - sh / 2 };
     frameRect = {
       l: start.l + (sr.left - start.l) * e,
-      t: start.t + (toTop - start.t) * e - Math.sin(Math.PI * e) * vh * 0.1,
+      t: start.t + (sr.top - sr.height * RAISE - start.t) * e - Math.sin(Math.PI * e) * vh * 0.1,
       w: sw + (sr.width - sw) * e,
       h: sh + (sr.height - sh) * e
     };
@@ -758,10 +732,7 @@ export function createKeyboard(stage, canvas, opts) {
     }
     const k = 1 - Math.exp(-dt * 3.5);
     tilt = [tilt[0] + (goal[0] - tilt[0]) * k, tilt[1] + (goal[1] - tilt[1]) * k];
-    // One full roll, from FLIP_START of the flight (this section's top entering the bottom of the screen) to the touchdown,
-    // on a gentle sine ease so it keeps turning visibly until the end: it comes in and lands keys up.
-    const rollT = clamp((flight - FLIP_START) / (1 - FLIP_START), 0, 1);
-    const roll = (1 - (1 - Math.cos(Math.PI * rollT)) / 2) * Math.PI * 2;
+    const roll = (1 - e) * Math.PI * 2;
     q = qMul(qAxis([0, 1, 0], YAW * e + tilt[0]), qMul(qAxis([1, 0, 0], tilt[1]), qAxis([1, 0, 0], roll)));
     lift = reduced ? 0 : Math.sin(now * 0.8) * 0.05;
 

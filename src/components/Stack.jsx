@@ -3,8 +3,8 @@ import { STACK } from '../content.js';
 import { SITE } from '../config.js';
 import { createKeyboard, hexToLinear } from '../lib/keyboard.js';
 
-/* The Stack: a 3D keyboard of the tools I use (lib/keyboard.js). Hover a key (tap, on touch) to press it; click, Enter or
-   Space sends a ripple across the board. The readout underneath names the key. Without WebGL2 the same tools show as a plain list. */
+/* The Stack: a 3D keyboard of the tools I use (lib/keyboard.js). Hover a key to press it; click, Enter or Space sends a
+   ripple across the board. The readout underneath names the key. Without WebGL2 the same tools show as a plain list. */
 
 const pad = (n) => String(n).padStart(2, '0');
 
@@ -23,7 +23,6 @@ export default function Stack({ theme }) {
   const boardRef = useRef(null);
   const [active, setActive] = useState(-1);
   const [failed, setFailed] = useState(false);
-  const verb = useMemo(() => (window.matchMedia('(hover: none)').matches ? 'Tap' : 'Hover'), []);
 
   // What the engine needs per key: the logo, its colour, and that colour in linear RGB for the press light
   // (near-black brands like GitHub light in the site's accent instead).
@@ -57,7 +56,7 @@ export default function Stack({ theme }) {
       <div className="pf-wrap">
         <div className="pf-kb__head">
           <h2 className="pf-h2" id="stack-title" data-split="">The Stack</h2>
-          <p className="pf-kb__lede">The tools I reach for every day, from the first commit to production. {verb} a key to press it.</p>
+          <p className="pf-kb__lede">The tools I reach for every day, from the first commit to production. Hover a key to press it.</p>
         </div>
 
         {failed ? (
@@ -75,9 +74,8 @@ export default function Stack({ theme }) {
               aria-label="A keyboard of the tools I use. Use the arrow keys to move between keys, Enter to press, or type a tool's first letter."
             >
               <canvas className="pf-kb__canvas" ref={canvasRef} aria-hidden="true"></canvas>
-              {/* The hovered key's name and line, above the keyboard in space of its own, so it never covers a key.
-                  Keyed by tool, so each change replays the entrance: the name rises out of a mask, the colour bar
-                  draws, the line follows. */}
+              {/* The hovered key's name and line, top left of the keyboard. Keyed by tool, so each change replays the
+                  entrance: the name rises out of a mask, the colour bar draws, the line follows. */}
               <div className="pf-kb__info" aria-live="polite">
                 {tool ? (
                   <div className="pf-kb__card" key={tool.name} style={{ '--kb-c': tool.dark ? 'var(--ink)' : '#' + tool.hex }}>
@@ -86,10 +84,9 @@ export default function Stack({ theme }) {
                     <p className="pf-kb__desc">{tool.desc}</p>
                   </div>
                 ) : (
-                  <p className="pf-kb__hint" key="hint">{pad(STACK.length)} tools · {verb.toLowerCase()} a key</p>
+                  <p className="pf-kb__hint" key="hint">{pad(STACK.length)} tools · hover a key</p>
                 )}
               </div>
-              <div className="pf-kb__board" aria-hidden="true"></div>
             </div>
             <ul className="pf-sr">{STACK.map((t) => <li key={t.name}>{t.name}: {t.desc}</li>)}</ul>
           </>

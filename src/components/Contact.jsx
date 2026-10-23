@@ -11,7 +11,7 @@ export default function Contact() {
       <div className="pf-contact__panel">
         <div className="pf-wrap pf-contact__grid">
           <div className="pf-contact__intro">
-            <h2 className="pf-h2 pf-contact__title" id="contact-title" data-split="">Let’s build something.</h2>
+            <h2 className="pf-h2 pf-contact__title" id="contact-title" data-split="focus">Let’s build something.</h2>
             <p className="pf-contact__lede">Tell me what you’re building, your timeline and what a good result looks like.</p>
             <div className="pf-email-wrap"><span className="pf-magnet" data-magnetic=""><a className="pf-email" href={'mailto:' + LINKS.email}>{LINKS.emailLabel}</a></span></div>
             <ul className="pf-socials">
