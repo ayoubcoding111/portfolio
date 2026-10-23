@@ -337,7 +337,14 @@ html,.lenis{scrollbar-gutter:stable}
 @media (min-width: 900px){ .pf-kb__head{grid-template-columns:minmax(0, 1fr) minmax(0, 26rem)} }
 .pf-kb__lede{color:var(--muted)}
 .pf-kb__stage{position:relative;margin-top:clamp(1rem, 3vw, 2.5rem);border-radius:var(--r-l);touch-action:pan-y;-webkit-tap-highlight-color:transparent}
-.pf-kb__board{height:clamp(300px, 40vw, 600px)}
+/* The board is never taller than what is left of the screen under the title and card, so the whole keyboard fits in view. */
+.pf-kb__board{height:clamp(240px, min(40vw, calc(100svh - 21rem)), 600px)}
+/* Wide screens: the card sits in a column of its own beside the keyboard, so the board can settle right under the title. */
+@media (min-width: 1100px){
+  .pf-kb__stage{display:grid;grid-template-columns:minmax(15rem, 21rem) minmax(0, 1fr);column-gap:1rem;align-items:start}
+  .pf-kb__info{min-height:0;max-width:none}
+  .pf-kb__board{height:clamp(300px, min(38vw, calc(100svh - 11.5rem)), 640px)}
+}
 .pf-kb__stage:focus-visible{outline:2px solid var(--focus);outline-offset:4px}
 /* The keyboard flies in across the section above, so its canvas covers the viewport; it never takes a click. It sits
    just above the page's ground and under all content, so text always reads on top of it (.pf isolates the layers). */
