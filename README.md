@@ -9,6 +9,8 @@ A scroll-driven portfolio built with React, Vite, GSAP and three.js. You fly thr
 ### Hero
 The name fills the screen over a live field of points that react to the cursor. Scrolling flies the camera into the counter of the **O**, and the next section rises up inside it.
 
+![Scrolling through the O of the hero name into the About section](docs/gifs/hero-zoom.gif)
+
 ### About
 A statement that lights up word by word as you scroll, a short bio, and three working principles.
 
@@ -16,6 +18,8 @@ A statement that lights up word by word as you scroll, a short bio, and three wo
 
 ### Skills: one click through four layers
 The section pins and tells a story: a click on the top layer sends a pulse of light down through each layer of the stack, one chapter per layer, then back up to an overview with every layer labelled. The layers are brushed-metal slabs rendered with three.js.
+
+![The skills story: a click travels down all four layers and back up](docs/gifs/skills-story.gif)
 
 | Frontend | Backend |
 | --- | --- |
@@ -27,6 +31,8 @@ The section pins and tells a story: a click on the top layer sends a pulse of li
 
 ### The Stack
 A 3D keyboard (raw WebGL2) of the tools I use. The board flies in and lands as you scroll. Hover a key to press it and read about the tool; click, Enter or Space sends a ripple across the board. On touch screens, tap a key instead.
+
+![The keyboard flies in, lands, and keys press as the pointer moves over them](docs/gifs/stack-keyboard.gif)
 
 ![The Stack](docs/screenshots/08-stack.jpg)
 
