@@ -38,12 +38,21 @@ export const LAYERS = [
   { idx: '04', title: 'DevOps & Tools', kicker: 'How it ships and stays up', story: 'It all ships, and stays up.', text: 'Containers, CI/CD and monitoring, so releases are routine and production stays quiet.', label: 'DevOps tools', tools: ['Git', 'GitHub', 'Vercel', 'Docker', 'Linux'] }
 ];
 
-/* PLACEHOLDER: stack, links and screenshots. Swap each [Screenshot]/[Detail] box for a real image in Projects.jsx. */
+/* Projects: titles, summaries and stacks come from the GitHub repos. Media lives in public/projects (compressed copies of
+   docs/screenshots). `main` is the big shot (an image, or a video with a poster); `details` are the two floating shots. */
 export const PROJECTS = [
-  { id: 'p1', tag: 'Placeholder: add stack and links', title: 'Japoni Auto', summary: 'Website for a car showroom in Algiers.', stack: ['[Framework]', '[Backend]', '[Hosting]'], demo: 'https://example.com', repo: LINKS.github, srName: 'Japoni Auto' },
-  { id: 'p2', tag: 'Placeholder', title: '[Your product or side project]', summary: '[One line: what it does and who it’s for.]', stack: ['[Tech]', '[Tech]', '[Tech]'], demo: 'https://example.com', repo: LINKS.github, srName: 'project 2' },
-  { id: 'p3', tag: 'Placeholder', title: '[Open-source work]', summary: '[One line: the problem it solves.]', stack: ['[Tech]', '[Tech]', '[Tech]'], demo: 'https://example.com', repo: LINKS.github, srName: 'project 3' },
-  { id: 'p4', tag: 'Placeholder', title: '[Work or client project]', summary: '[One line: your role and the result.]', stack: ['[Tech]', '[Tech]', '[Tech]'], demo: 'https://example.com', repo: LINKS.github, srName: 'project 4' }
+  { id: 'p1', title: 'Japoni Auto', summary: 'A dark, motion-led one-page site for a car showroom in Algiers: a cinematic intro, a pinned gallery of the cars on the floor and an enquiry that writes itself up for WhatsApp or email.', stack: ['React', 'Vite', 'GSAP', 'Lenis'], repo: 'https://github.com/ayoubcoding111/japoni-auto', srName: 'Japoni Auto', url: 'japoni-auto-ten.vercel.app',
+    main: { video: '/projects/japoni-reel.mp4', poster: '/projects/japoni-hero.webp', alt: 'Japoni Auto: the showroom intro, then the hero with a black BMW' },
+    details: [{ src: '/projects/japoni-cars.webp', alt: 'Japoni Auto: the “On the floor” car gallery' }] },
+  { id: 'p2', title: 'Delicious Restaurant', summary: 'A full-stack food ordering platform: customers order and track their food live, staff run a kitchen dashboard and admins get analytics, in English, French and Arabic.', stack: ['Node.js', 'MySQL', 'Vanilla JS'], repo: 'https://github.com/ayoubcoding111/restaurant-full-system', srName: 'Delicious Restaurant', url: 'restaurant-full-system',
+    main: { video: '/projects/restaurant-reel.mp4', poster: '/projects/restaurant-poster.webp', alt: 'Delicious Restaurant: the animated hero with the Tacos, Drinks and Family Pack marquee' },
+    details: [{ src: '/projects/restaurant-dishes.webp', alt: 'Delicious Restaurant: the signature dishes reel' }, { src: '/projects/restaurant-admin.webp', alt: 'Delicious Restaurant: the admin analytics dashboard' }] },
+  { id: 'p3', title: 'Pacific Dental Clinic', summary: 'A bilingual website for a dental clinic in Algiers, with draggable before and after results, patient reviews and an appointment form, in plain HTML, CSS and JavaScript.', stack: ['HTML', 'CSS', 'JavaScript'], repo: 'https://github.com/ayoubcoding111/Dentist-website', srName: 'Pacific Dental Clinic', url: 'ayoubcoding111.github.io/Dentist-website',
+    main: { src: '/projects/dental-main.webp', alt: 'Pacific Dental Clinic: the hero with a smiling patient and the Prendre RDV button' },
+    details: [{ src: '/projects/dental-ba.webp', alt: 'Pacific Dental Clinic: the before and after slider' }, { src: '/projects/dental-contact.webp', alt: 'Pacific Dental Clinic: the appointment booking form' }] },
+  { id: 'p4', title: 'Jesko Jets', summary: 'A cinematic, scroll-driven landing page for a private jet charter brand: you fly through an airplane window into open sky, then land on the fleet, the advantages and a booking form.', stack: ['HTML', 'CSS', 'JavaScript', 'GSAP', 'Lenis'], repo: 'https://github.com/ayoubcoding111/private-aviation-company', srName: 'Jesko Jets', url: 'ayoubcoding111.github.io/private-aviation-company',
+    main: { video: '/projects/jesko-reel.mp4', poster: '/projects/jesko-poster.webp', alt: 'Jesko Jets: scrolling through an airplane window into the sky' },
+    details: [{ src: '/projects/jesko-adv.webp', alt: 'Jesko Jets: the advantages cards' }, { src: '/projects/jesko-booking.webp', alt: 'Jesko Jets: the booking form' }] }
 ];
 
 /* PLACEHOLDER: drafted answers. Fill in each [bracket] with your own details, and rewrite any answer that doesn't sound

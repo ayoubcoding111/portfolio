@@ -401,9 +401,10 @@ html,.lenis{scrollbar-gutter:stable}
 .pf-shot--f1 .pf-card__ph,.pf-shot--f2 .pf-card__ph{background-size:1.25rem 1.25rem}
 .pf-card__ph-label{padding:.5rem .8rem;border:1px dashed var(--line-strong);border-radius:var(--r-s);background:var(--ground);font-size:.875rem;font-weight:500;color:var(--muted)}
 .pf-shot--f1 .pf-card__ph-label,.pf-shot--f2 .pf-card__ph-label{padding:.2rem .45rem;font-size:.6875rem}
+.pf-card__ph--media{overflow:hidden;background-image:none}
+.pf-card__ph--media > img,.pf-card__ph--media > video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
 .pf-glare{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(560px circle at var(--gx, 50%) var(--gy, 40%), rgb(140 175 255 / .16), transparent 42%);opacity:0;transition:opacity .5s ease}
 .pf-card__body{display:grid;gap:.7rem}
-.pf-tag{justify-self:start;padding:.2rem .7rem;border:1px dashed currentColor;border-radius:999px;font-size:.8125rem;font-weight:600;line-height:1.5;color:var(--accent-ink)}
 .pf-card__title{font-stretch:125%;font-weight:760;font-size:clamp(1.5rem, 1.1rem + 1.2vw, 2.25rem);line-height:1.05;letter-spacing:-.035em}
 .pf-card__summary{max-width:34rem;color:var(--muted)}
 .pf-card__stack{display:flex;flex-wrap:wrap;gap:.3rem 1.1rem;margin-top:.3rem;padding-top:.85rem;border-top:1px solid var(--line);font-size:.9375rem;font-weight:500}
