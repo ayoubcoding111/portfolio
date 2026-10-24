@@ -1,10 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { PROJECTS } from '../content.js';
 
-const Ext = () => (
-  <svg className="pf-ic" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8 7h9v9"></path></svg>
-);
-
 const play = (v) => { const p = v.play(); if (p && p.catch) { p.catch(() => {}); } };
 
 /* The big shot of a card can be a video. With a mouse it plays while the card is hovered. On a touch screen it plays by
@@ -79,9 +75,6 @@ export default function Projects() {
                   <h3 className="pf-card__title" id={p.id + '-title'}>{p.title}</h3>
                   <p className="pf-card__summary">{p.summary}</p>
                   <ul className="pf-card__stack" aria-label="Stack">{p.stack.map((s, i) => <li key={i}>{s}</li>)}</ul>
-                  <div className="pf-card__links">
-                    <a className="pf-link" href={p.repo} target="_blank" rel="noopener noreferrer">GitHub<span className="pf-sr"> repository for {p.srName} (opens in a new tab)</span><Ext /></a>
-                  </div>
                 </div>
               </article>
             </li>
