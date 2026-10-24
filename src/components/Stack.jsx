@@ -9,7 +9,7 @@ import { createKeyboard, hexToLinear } from '../lib/keyboard.js';
 const pad = (n) => String(n).padStart(2, '0');
 
 function ToolIcon({ tool }) {
-  if (!tool.path) { return <span className="pf-kb__chip-text" aria-hidden="true">{tool.short}</span>; }
+  if (!tool.path) { return <span className="pf-kb__chip-text" aria-hidden="true" style={{ color: '#' + tool.hex }}>{tool.short}</span>; }
   return (
     <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false" style={{ fill: '#' + tool.hex }}>
       <path d={tool.path}></path>
@@ -65,17 +65,10 @@ export default function Stack({ theme }) {
           </ul>
         ) : (
           <>
-            <div
-              className="pf-kb__stage"
-              ref={stageRef}
-              tabIndex={0}
-              role="application"
-              aria-roledescription="keyboard"
-              aria-label="A keyboard of the tools I use. Use the arrow keys to move between keys, Enter to press, or type a tool's first letter."
-            >
-              <canvas className="pf-kb__canvas" ref={canvasRef} aria-hidden="true"></canvas>
-              {/* The hovered key's name and line, top left of the keyboard. Keyed by tool, so each change replays the
-                  entrance: the name rises out of a mask, the colour bar draws, the line follows. */}
+            <div className="pf-kb__board">
+              {/* The hovered key's name and line: top left over the keyboard on wide screens, above it on narrower ones
+                  (where the board reaches into the stage's corner). Keyed by tool, so each change replays the entrance:
+                  the name rises out of a mask, the colour bar draws, the line follows. */}
               <div className="pf-kb__info" aria-live="polite">
                 {tool ? (
                   <div className="pf-kb__card" key={tool.name} style={{ '--kb-c': tool.dark ? 'var(--ink)' : '#' + tool.hex }}>
@@ -86,6 +79,16 @@ export default function Stack({ theme }) {
                 ) : (
                   <p className="pf-kb__hint" key="hint">{pad(STACK.length)} tools · hover a key</p>
                 )}
+              </div>
+              <div
+                className="pf-kb__stage"
+                ref={stageRef}
+                tabIndex={0}
+                role="application"
+                aria-roledescription="keyboard"
+                aria-label="A keyboard of the tools I use. Use the arrow keys to move between keys, Enter to press, or type a tool's first letter."
+              >
+                <canvas className="pf-kb__canvas" ref={canvasRef} aria-hidden="true"></canvas>
               </div>
             </div>
             <ul className="pf-sr">{STACK.map((t) => <li key={t.name}>{t.name}: {t.desc}</li>)}</ul>

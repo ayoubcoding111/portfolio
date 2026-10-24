@@ -48,6 +48,7 @@ export class PortfolioMotion {
     clearTimeout(this.pfPoll);
     clearTimeout(this.pfResizeTimer);
     clearTimeout(this.pfFaqTimer);
+    clearTimeout(this.pfSentTimer);
     clearInterval(this.pfClockId);
     if (this.pfField) { this.pfField.destroy(); this.pfField = null; }
     if (this.pfHt) { this.pfHt.destroy(); this.pfHt = null; }
@@ -200,6 +201,10 @@ export class PortfolioMotion {
     const fields = { name: form.querySelector('#cf-name'), email: form.querySelector('#cf-email'), message: form.querySelector('#cf-message') };
     const status = form.querySelector('[data-status]');
     const button = form.querySelector('[data-submit]');
+    const label = button.querySelector('[data-submit-label]') || button;
+    const idleText = label.textContent;
+    // The state drives the icon in CSS: arrow when idle, spinner while sending, a check for a moment once sent.
+    const setState = (state, text) => { button.dataset.state = state; label.textContent = text; };
     const check = (key) => {
       const v = (fields[key].value || '').trim();
       if (key === 'name') { return v ? '' : 'Enter your name.'; }
@@ -232,25 +237,29 @@ export class PortfolioMotion {
       });
       if (firstBad) { firstBad.focus(); return; }
 
-      // TODO: connect the contact form. Put your form endpoint here, for example a
-      // Formspree URL or your own /api/contact route, and the request below sends it.
-      const FORM_ENDPOINT = '';
       if (!FORM_ENDPOINT) {
         if (status) { status.textContent = 'Thanks! This form isn’t connected yet, so nothing was sent. Please email me directly for now.'; }
         return;
       }
-      const label = button.textContent;
+      clearTimeout(this.pfSentTimer);
       button.disabled = true;
       button.setAttribute('aria-busy', 'true');
-      button.textContent = 'Sending…';
-      fetch(FORM_ENDPOINT, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form) })
+      setState('sending', 'Sending…');
+      fetch(FORM_ENDPOINT, { method: 'POST', headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify(Object.fromEntries(new FormData(form))) })
         .then((res) => {
           if (!res.ok) { throw new Error('HTTP ' + res.status); }
           form.reset();
           if (status) { status.textContent = 'Message sent. I’ll reply soon.'; }
+          return true;
         })
-        .catch(() => { if (status) { status.textContent = 'Your message couldn’t be sent. Check your connection and try again, or email me directly.'; } })
-        .then(() => { button.disabled = false; button.removeAttribute('aria-busy'); button.textContent = label; });
+        .catch(() => { if (status) { status.textContent = 'Your message couldn’t be sent. Check your connection and try again, or email me directly.'; } return false; })
+        .then((sent) => {
+          button.disabled = false;
+          button.removeAttribute('aria-busy');
+          if (!sent) { setState('idle', idleText); return; }
+          setState('sent', 'Sent');
+          this.pfSentTimer = setTimeout(() => setState('idle', idleText), 2400);
+        });
     });
   }
 
@@ -582,6 +591,7 @@ export class PortfolioMotion {
     const lenis = this.pfLenis;
     if (!lenis || !data || !data.event || data.event.type !== 'wheel') { return true; }
     if (performance.now() < (this.pfNavUntil || 0)) { return true; }
+    this.pfTrackWheel(data.deltaY);
     const a = lenis.animatedScroll;
     const t0 = lenis.targetScroll;
     const t1 = t0 + data.deltaY;
@@ -626,6 +636,25 @@ export class PortfolioMotion {
   // raise or lower to speed up or slow down the hero, the Skills story and the keyboard's flight together).
   pfCapPx() { return Math.max(100, this.pfViewH() * 0.17); }
 
+  /* How hard the wheel is being spun, as a smoothed rate in px/ms that fades out within a few hundred ms of the last event.
+     A gentle scroll stays near 0-1; a fast spin or a hard trackpad flick runs 3-10. */
+  pfTrackWheel(dy) {
+    const now = performance.now();
+    const dt = Math.max(8, now - (this.pfWheelT || 0));
+    const k = Math.min(1, dt / 120);
+    this.pfWheelRate = this.pfWheelRate0() * (1 - k) + (Math.abs(dy) / dt) * k;
+    this.pfWheelT = now;
+  }
+
+  pfWheelRate0() { return (this.pfWheelRate || 0) * Math.exp(-(performance.now() - (this.pfWheelT || 0)) / 250); }
+
+  // The limit for the Skills story and the keyboard's flight that follows it: the hero's at a normal pace, loosening up
+  // to 2.2x as the wheel spins faster, so a fast scroll still gets through quicker while a gentle one plays every chapter.
+  pfFastCapPx() {
+    const boost = pfClamp((this.pfWheelRate0() - 1.2) / 5, 0, 1);
+    return this.pfCapPx() * (1 + 1.2 * boost);
+  }
+
   /* The keyboard's flight is driven by scroll position (lib/keyboard.js): it begins when the section's top is 1.55 screens
      down and lands when the stage's centre reaches 55% of the screen's height. Cap the scroll across that stretch. */
   pfKeyboardCap(ST) {
@@ -646,8 +675,9 @@ export class PortfolioMotion {
     const stale = () => { range = null; };
     ST.addEventListener('refresh', stale);
     this.pfMotionOff.push(() => ST.removeEventListener('refresh', stale));
-    // The slow limit ends the moment it has landed (no run-up past the end); the site-wide limit takes over below it.
-    this.pfAddCap({ start: () => get().start, end: () => get().end, cap: () => this.pfCapPx(), after: () => 0 });
+    // The slow limit ends the moment it has landed (no run-up past the end); the site-wide limit takes over below it. It
+    // starts while the Skills story is still ending, so it loosens on a fast scroll the same way the story does.
+    this.pfAddCap({ start: () => get().start, end: () => get().end, cap: () => this.pfFastCapPx(), after: () => 0 });
   }
 
   // The rest of the site: the hero's allowed lead divided by PF_SITE_STRICTNESS.
@@ -1058,7 +1088,7 @@ export class PortfolioMotion {
     // Each chapter's headline sharpens out of a blur word by word, drifting in from the outer edge (the chapters alternate
     // sides, the closing line sits on the right), and the rest of it follows. The section title alone decodes (pfDecode).
     const lines = chapters.concat(outro).map((ch, i) => this.pfFocus(ch.querySelector('[data-lx-line]'), i < 4 && i % 2 === 0 ? -18 : 18));
-    const rests = chapters.map((ch) => ch.querySelectorAll('.pf-lx__eyebrow, .pf-lx__ctext, .pf-chip'));
+    const rests = chapters.map((ch) => ch.querySelectorAll('.pf-lx__eyebrow, .pf-lx__ctext, .pf-lx__tools li'));
     const headWords = title ? this.pfDecode(title) : [];
     // The words start blurred and unseen (q = 0 is painted up front) and the rest is hidden up front, so a staggered reveal never shows a word before its turn.
     const wordsIn = (words, at, duration, stagger) => tl.fromTo(words, { q: 0 }, { q: 1, duration, ease: 'none', stagger, immediateRender: false }, at);
@@ -1158,9 +1188,9 @@ export class PortfolioMotion {
 
     const pinLen = () => Math.round(this.pfViewH() * PIN);
     const story = ST.create({ trigger: pinEl, start: 'top bottom', end: () => '+=' + (this.pfViewH() + pinLen()), scrub: 1, animation: tl, invalidateOnRefresh: true });
-    // The story gets the hero's speed limit across its whole run (the screen before the pin, and the pin), so the chapters
-    // can't be flicked past.
-    if (this.pfLenis) { this.pfAddCap({ start: () => story.start, end: () => story.end, cap: () => this.pfCapPx() }); }
+    // The story gets a speed limit across its whole run (the screen before the pin, and the pin), so the chapters can't
+    // be flicked past, though a fast scroll is let through faster than a gentle one.
+    if (this.pfLenis) { this.pfAddCap({ start: () => story.start, end: () => story.end, cap: () => this.pfFastCapPx() }); }
     ST.create({ trigger: pinEl, start: 'top top', end: () => '+=' + pinLen(), pin: true, anticipatePin: 1, invalidateOnRefresh: true, refreshPriority: 1, onRefresh: measure });
     layers.onFrame = (a) => { this.pfLxAnchors = a; place(a); };
     measure();

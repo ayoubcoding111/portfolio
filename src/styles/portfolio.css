@@ -281,7 +281,10 @@ html,.lenis{scrollbar-gutter:stable}
 .pf-lx__eyebrow b{font-weight:500;color:var(--accent-ink)}
 .pf-lx__line{margin-top:1.1rem;font-stretch:125%;font-weight:760;font-size:clamp(2rem, min(.9rem + 3vw, 8vh), 4.25rem);line-height:.98;letter-spacing:-.045em;text-wrap:balance}
 .pf-lx__ctext{max-width:34ch;margin-top:1.4rem;font-size:clamp(1rem, .95rem + .25vw, 1.125rem);line-height:1.6;color:var(--muted)}
-.pf-lx__ch .pf-chips{margin-top:1.25rem}
+/* A layer's tools: a plain mono line split by slashes. */
+.pf-lx__tools{display:flex;flex-wrap:wrap;row-gap:.35rem;font-family:var(--f-mono);font-size:.8125rem;letter-spacing:.02em;line-height:1.5;color:var(--ink)}
+.pf-lx__tools li:not(:last-child)::after{content:"/";margin:0 .75em;color:var(--muted)}
+.pf-lx__ch .pf-lx__tools{margin-top:1.25rem}
 .pf-lx__outro{width:min(24rem, 28vw)}
 .pf-lx__outro .pf-lx__line{margin-top:0;font-size:clamp(1.5rem, min(1rem + 1.6vw, 5.2vh), 2.75rem);line-height:1.05}
 .pf-lx__leaders{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
@@ -342,16 +345,24 @@ html,.lenis{scrollbar-gutter:stable}
 .pf-kb__head{display:grid;gap:1.5rem clamp(2rem, 6vw, 6rem);align-items:end}
 @media (min-width: 900px){ .pf-kb__head{grid-template-columns:minmax(0, 1fr) minmax(0, 26rem)} }
 .pf-kb__lede{color:var(--muted)}
-.pf-kb__stage{position:relative;height:clamp(380px, 46vw, 700px);margin-top:clamp(1rem, 3vw, 2.5rem);border-radius:var(--r-l);touch-action:pan-y;-webkit-tap-highlight-color:transparent}
+.pf-kb__board{--kb-h:clamp(380px, 46vw, 700px);position:relative;margin-top:clamp(1rem, 3vw, 2.5rem)}
+/* Below 1200px the board reaches up into the stage's top-left corner (it's drawn raised by RAISE in lib/keyboard.js), so
+   the readout gets its own space above, and the stage drops by that raise to keep the two apart. */
+.pf-kb__stage{position:relative;height:var(--kb-h);margin-top:calc(var(--kb-h) * .2);border-radius:var(--r-l);touch-action:pan-y;-webkit-tap-highlight-color:transparent}
 .pf-kb__stage:focus-visible{outline:2px solid var(--focus);outline-offset:4px}
 /* The keyboard flies in over the section above, so its canvas covers the viewport; it never takes a click. */
-.pf-kb__canvas{position:fixed;inset:0;z-index:40;display:block;width:100vw;height:100vh;pointer-events:none}
-.pf-kb__info{position:absolute;left:0;top:0;z-index:41;max-width:min(30rem, 62%);pointer-events:none}
+/* Under the page's text, above its background (.pf isolates, so -1 stays inside it): the board flies behind headings. */
+.pf-kb__canvas{position:fixed;inset:0;z-index:-1;display:block;width:100vw;height:100vh;pointer-events:none}
+.pf-kb__info{position:relative;z-index:41;min-height:8.5rem;max-width:30rem;pointer-events:none}
+@media (min-width: 1200px){
+  .pf-kb__info{position:absolute;left:0;top:0;min-height:0;max-width:min(30rem, 62%)}
+  .pf-kb__stage{margin-top:0}
+}
 .pf-kb__card{display:grid;gap:.7rem}
 .pf-kb__meta{display:flex;align-items:center;gap:.75rem;font-family:var(--f-mono);font-size:.75rem;letter-spacing:.12em;color:var(--muted)}
 .pf-kb__bar{width:2.5rem;height:3px;border-radius:3px;background:var(--kb-c);transform-origin:0 50%;animation:pfKbBar .5s var(--ease-out) both}
 .pf-kb__mask{display:block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em}
-.pf-kb__title{display:block;font-stretch:125%;font-weight:800;font-size:clamp(2.25rem, 1.3rem + 3.6vw, 4.75rem);line-height:.95;letter-spacing:-.045em;color:var(--ink);animation:pfKbRise .5s var(--ease-out) both}
+.pf-kb__title{display:block;font-stretch:125%;font-weight:800;font-size:clamp(1.625rem, 1rem + 1.8vw, 2.75rem);line-height:.95;letter-spacing:-.04em;color:var(--ink);animation:pfKbRise .5s var(--ease-out) both}
 .pf-kb__desc{max-width:32ch;font-size:clamp(1rem, .95rem + .3vw, 1.25rem);line-height:1.4;color:var(--muted);animation:pfKbFade .45s var(--ease-out) .07s both}
 .pf-kb__hint{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);animation:pfKbFade .45s var(--ease-out) both}
 @keyframes pfKbRise{from{transform:translateY(105%)}}
@@ -447,28 +458,45 @@ html,.lenis{scrollbar-gutter:stable}
 
 /* ---------- Contact and footer ---------- */
 .pf-contact{padding-top:var(--section-y)}
-.pf-contact__panel{padding-top:var(--section-y);border-radius:2rem 2rem 0 0;background:var(--accent);color:var(--on-accent)}
+.pf-contact__panel{padding-top:var(--section-y);padding-bottom:clamp(3.5rem, 2rem + 5vw, 7rem);border-radius:2rem 2rem 0 0;background:var(--accent);color:var(--on-accent)}
 .pf-contact__grid{display:grid;gap:clamp(3rem, 6vw, 5rem)}
 @media (min-width: 1000px){ .pf-contact__grid{grid-template-columns:minmax(0, 7fr) minmax(0, 5fr);align-items:start} }
 .pf-contact__title{max-width:11ch}
 .pf-contact__lede{max-width:30rem;margin-top:1.5rem;color:rgb(255 255 255 / .88)}
-.pf-email-wrap{margin-top:clamp(2rem, 4vw, 3rem)}
-.pf-email{display:inline-block;font-stretch:112%;font-weight:700;font-size:clamp(1.5rem, 1rem + 2.4vw, 3.25rem);line-height:1.15;letter-spacing:-.025em;text-decoration:underline;text-decoration-thickness:.06em;text-underline-offset:.2em;overflow-wrap:anywhere}
+/* The address stays on one line: its size is capped by the column's width (cqi), so it shrinks instead of wrapping. */
+.pf-email-wrap{margin-top:clamp(2rem, 4vw, 3rem);container-type:inline-size}
+.pf-email{display:inline-block;font-stretch:112%;font-weight:700;font-size:min(clamp(1.5rem, 1rem + 2.4vw, 3.25rem), 6.4cqi);line-height:1.15;letter-spacing:-.025em;white-space:nowrap;text-decoration:underline;text-decoration-thickness:.06em;text-underline-offset:.2em}
 .pf-socials{display:flex;flex-wrap:wrap;gap:0 2rem;margin-top:1.75rem}
 .pf-contact .pf-link{text-decoration-color:rgb(255 255 255 / .5)}
 .pf-contact :focus-visible{outline-color:#FFFFFF}
 .pf-form{display:grid;gap:1.25rem;padding:clamp(1.5rem, 3vw, 2.5rem);border:1px solid rgb(255 255 255 / .24);border-radius:var(--r-l);background:rgb(255 255 255 / .07)}
 .pf-form__title{font-stretch:112%;font-weight:650;font-size:1.375rem;line-height:1.2}
 .pf-field{display:grid;gap:.45rem}
-.pf-field label{font-size:.9375rem;font-weight:600}
-.pf-input{width:100%;min-height:3.25rem;padding:.85rem 1rem;border:1.5px solid rgb(255 255 255 / .42);border-radius:var(--r-s);background:rgb(7 10 28 / .22);color:#FFFFFF;font:inherit;font-size:1rem;line-height:1.4;transition:border-color .2s ease,background-color .2s ease}
-.pf-input:hover{border-color:rgb(255 255 255 / .7)}
-.pf-input:focus-visible{outline:2px solid #FFFFFF;outline-offset:2px;border-color:#FFFFFF}
+.pf-field label{font-size:.9375rem;font-weight:600;color:rgb(255 255 255 / .82);transition:color .2s ease}
+.pf-field:focus-within label{color:#FFFFFF}
+.pf-input{width:100%;min-height:3.25rem;padding:.85rem 1.1rem;border:1.5px solid rgb(255 255 255 / .34);border-radius:var(--r-m);background:rgb(7 10 28 / .2);color:#FFFFFF;font:inherit;font-size:1rem;line-height:1.4;transition:border-color .2s ease,background-color .2s ease,box-shadow .25s var(--ease-out)}
+.pf-input:hover{border-color:rgb(255 255 255 / .62)}
+/* A soft halo instead of a hard outline; the border still turns solid white so focus stays obvious. */
+.pf-input:focus-visible{outline:none;border-color:#FFFFFF;background:rgb(7 10 28 / .3);box-shadow:0 0 0 4px rgb(255 255 255 / .2)}
 .pf-input[aria-invalid="true"]{border-color:#FFFFFF;border-style:dashed;background:rgb(7 10 28 / .36)}
 textarea.pf-input{min-height:9rem;resize:vertical;line-height:1.5}
 .pf-field__err{font-size:.875rem;font-weight:600;line-height:1.4}
 .pf-field__err:empty,.pf-form__status:empty{display:none}
-.pf-form__status{padding:.9rem 1rem;border-radius:var(--r-s);background:rgb(7 10 28 / .28);font-size:.9375rem;line-height:1.45}
+.pf-form__status{padding:.9rem 1rem;border-radius:var(--r-m);background:rgb(7 10 28 / .28);font-size:.9375rem;line-height:1.45}
+/* Send: the hero's pill-and-arrow button, stretched across the card, with a navy disc that turns accent on hover. */
+.pf-btn--send{width:100%;justify-content:space-between;margin-top:.5rem;padding-left:1.6rem;box-shadow:0 18px 36px -18px rgb(7 10 28 / .6)}
+.pf-btn--send:active{transform:scale(.985)}
+.pf-btn--send[disabled]{opacity:1}
+.pf-btn--send .pf-btn-icon{width:2.5rem;height:2.5rem;background:#0D1230;color:#FFFFFF;transition:background-color .3s ease}
+.pf-btn--send .pf-btn-icon svg{transition:transform .55s var(--ease-out),opacity .2s ease,scale .3s var(--ease-out)}
+.pf-send-spin,.pf-send-check{grid-area:1 / 1;opacity:0;scale:.4;transition:opacity .2s ease,scale .35s var(--ease-out)}
+.pf-send-spin{width:1.05rem;height:1.05rem;border:2px solid rgb(255 255 255 / .28);border-top-color:#FFFFFF;border-radius:50%}
+.pf-btn--send:not([data-state="idle"]) .i1,.pf-btn--send:not([data-state="idle"]) .i2{opacity:0;scale:.4}
+.pf-btn--send[data-state="sending"] .pf-send-spin{opacity:1;scale:1;animation:pfSpin .7s linear infinite}
+.pf-btn--send[data-state="sent"] .pf-send-check{opacity:1;scale:1}
+.pf-btn--send[data-state="sent"] .pf-btn-icon{background:var(--accent)}
+@keyframes pfSpin{to{rotate:360deg}}
+@media (hover: hover) and (pointer: fine){ .pf-btn--send:hover .pf-btn-icon{background:var(--accent)} }
 /* ---------- Footer: halftone wordmark ---------- */
 .pf-hwf{position:relative;z-index:1;display:flex;flex:1 0 auto;flex-direction:column;overflow:hidden;isolation:isolate;padding-bottom:env(safe-area-inset-bottom, 0px);background:var(--ground);color:var(--ink)}
 .pf-hwf-top{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0, 1.25fr) repeat(3, minmax(0, 1fr));gap:1.5rem;padding-top:clamp(1.75rem, 3.4vw, 2.75rem);font-family:var(--f-mono);font-size:.6875rem;line-height:1.85;letter-spacing:.18em;text-transform:uppercase}

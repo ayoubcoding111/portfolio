@@ -22,7 +22,7 @@ export default function Skills() {
                 <p className="pf-lx__eyebrow"><b>{l.idx}</b>{l.title}</p>
                 <p className="pf-lx__line" data-lx-line="">{l.story}</p>
                 <p className="pf-lx__ctext">{l.text}</p>
-                <ul className="pf-chips">{l.tools.map((t) => <li className="pf-chip" key={t}>{t}</li>)}</ul>
+                <ul className="pf-lx__tools">{l.tools.map((t) => <li key={t}>{t}</li>)}</ul>
               </div>
             ))}
             <div className="pf-lx__ch pf-lx__ch--r pf-lx__outro" data-lx-outro="">
@@ -54,7 +54,7 @@ export default function Skills() {
               <li className="pf-lx__item" data-lx-item="" key={l.idx}>
                 <div className="pf-lx__ihead"><span className="pf-lx__iidx">{l.idx}</span><h3 className="pf-lx__ititle">{l.title}</h3><span className="pf-lx__ikicker">{l.kicker}</span></div>
                 <p className="pf-lx__itext">{l.text}</p>
-                <ul className="pf-chips" aria-label={l.label}>{l.tools.map((t) => <li className="pf-chip" key={t}>{t}</li>)}</ul>
+                <ul className="pf-lx__tools" aria-label={l.label}>{l.tools.map((t) => <li key={t}>{t}</li>)}</ul>
               </li>
             ))}
           </ol>

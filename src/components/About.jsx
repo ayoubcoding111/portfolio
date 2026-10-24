@@ -10,7 +10,7 @@ export default function About() {
       <div className="pf-wrap">
         <h2 className="pf-statement" id="about-title" data-highlight="">I like software that feels simple on the surface and stays calm underneath.</h2>
         <div className="pf-about__body">
-          <p>I’m Ayoub, a full-stack engineer. I take web products from first sketch to production: the interface, the API behind it, the data underneath and the pipeline that ships it.</p>
+          <p>I’m Ayoub, a full-stack engineer. I take web products from first sketch to production: the interface, the API behind it, the data underneath and the pipeline that ships it. I studied cyber security engineering at USTHB and have two years of hands-on experience.</p>
           <p>I keep the core boring and well tested, measure before I optimize, and ship in small steps so problems surface early. To me, good engineering is mostly clear decisions that stay easy to change.</p>
         </div>
         <ul className="pf-principles">
