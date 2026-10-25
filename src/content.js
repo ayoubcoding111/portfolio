@@ -41,18 +41,18 @@ export const LAYERS = [
 /* Projects: titles, summaries and stacks come from the GitHub repos. Media lives in public/projects (compressed copies of
    docs/screenshots). `main` is the big shot (an image, or a video with a poster); `details` are the two floating shots. */
 export const PROJECTS = [
-  { id: 'p1', title: 'Japoni Auto', summary: 'A dark, motion-led one-page site for a car showroom in Algiers: a cinematic intro, a pinned gallery of the cars on the floor and an enquiry that writes itself up for WhatsApp or email.', stack: ['React', 'Vite', 'GSAP', 'Lenis'], url: 'japoni-auto-ten.vercel.app',
+  { id: 'p1', title: 'Japoni Auto', summary: 'A dark, motion-led one-page site for a car showroom in Algiers: a cinematic intro, a pinned gallery of the cars on the floor and an enquiry that writes itself up for WhatsApp or email.', stack: ['React', 'Vite', 'GSAP', 'Lenis'], url: 'japoniauto.com',
     main: { video: '/projects/japoni-reel.mp4', poster: '/projects/japoni-hero.webp', alt: 'Japoni Auto: the showroom intro, then the hero with a black BMW' },
     details: [{ src: '/projects/japoni-cars.webp', alt: 'Japoni Auto: the “On the floor” car gallery' }] },
-  { id: 'p2', title: 'Delicious Restaurant', summary: 'A full-stack food ordering platform: customers order and track their food live, staff run a kitchen dashboard and admins get analytics, in English, French and Arabic.', stack: ['Node.js', 'MySQL', 'Vanilla JS'], url: 'restaurant-full-system',
+  { id: 'p2', title: 'Delicious Restaurant', summary: 'A full-stack food ordering platform: customers order and track their food live, staff run a kitchen dashboard and admins get analytics, in English, French and Arabic.', stack: ['Node.js', 'MySQL', 'Vanilla JS'], url: 'deliciousrestaurant.com',
     main: { video: '/projects/restaurant-reel.mp4', poster: '/projects/restaurant-poster.webp', alt: 'Delicious Restaurant: the animated hero with the Tacos, Drinks and Family Pack marquee' },
     details: [{ src: '/projects/restaurant-dishes.webp', alt: 'Delicious Restaurant: the signature dishes reel' }, { src: '/projects/restaurant-admin.webp', alt: 'Delicious Restaurant: the admin analytics dashboard' }] },
-  { id: 'p3', title: 'Pacific Dental Clinic', summary: 'A bilingual website for a dental clinic in Algiers, with draggable before and after results, patient reviews and an appointment form, in plain HTML, CSS and JavaScript.', stack: ['HTML', 'CSS', 'JavaScript'], url: 'ayoubcoding111.github.io/Dentist-website',
+  { id: 'p3', title: 'Pacific Dental Clinic', summary: 'A bilingual website for a dental clinic in Algiers, with draggable before and after results, patient reviews and an appointment form, in plain HTML, CSS and JavaScript.', stack: ['HTML', 'CSS', 'JavaScript'], url: 'pacificdentalclinic.com',
     main: { src: '/projects/dental-main.webp', alt: 'Pacific Dental Clinic: the hero with a smiling patient and the Prendre RDV button' },
     details: [{ src: '/projects/dental-ba.webp', alt: 'Pacific Dental Clinic: the before and after slider' }, { src: '/projects/dental-contact.webp', alt: 'Pacific Dental Clinic: the appointment booking form' }] },
-  { id: 'p4', title: 'Jesko Jets', summary: 'A cinematic, scroll-driven landing page for a private jet charter brand: you fly through an airplane window into open sky, then land on the fleet, the advantages and a booking form.', stack: ['HTML', 'CSS', 'JavaScript', 'GSAP', 'Lenis'], url: 'ayoubcoding111.github.io/private-aviation-company',
-    main: { video: '/projects/jesko-reel.mp4', poster: '/projects/jesko-poster.webp', alt: 'Jesko Jets: scrolling through an airplane window into the sky' },
-    details: [{ src: '/projects/jesko-adv.webp', alt: 'Jesko Jets: the advantages cards' }, { src: '/projects/jesko-booking.webp', alt: 'Jesko Jets: the booking form' }] }
+  { id: 'p4', title: 'Oriel', summary: 'A scroll-driven concept site for an independent watchmaker: a 3D watch built entirely in code comes apart layer by layer, dives into the movement, then rebuilds in the metal and dial you pick.', stack: ['Three.js', 'GSAP', 'Lenis', 'Vite'], url: 'oriel.com',
+    main: { video: '/projects/oriel-reel.mp4', poster: '/projects/oriel-poster.webp', alt: 'Oriel: the hero with a 3D watch beside the headline “Time, taken apart.”' },
+    details: [{ src: '/projects/oriel-anatomy.webp', alt: 'Oriel: the exploded anatomy, seven labelled layers' }, { src: '/projects/oriel-movement.webp', alt: 'Oriel: a close view of the Calibre O-1 movement' }] }
 ];
 
 /* PLACEHOLDER: drafted answers. Fill in each [bracket] with your own details, and rewrite any answer that doesn't sound
