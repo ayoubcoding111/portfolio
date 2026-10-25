@@ -429,8 +429,7 @@ export class PortfolioMotion {
       const nav = this.pfOne('.pf-nav');
       if (nav) { nav.classList.remove('is-scrolled', 'is-hidden'); }
       this.pfQ('.pf-nav__list a[aria-current]').forEach((a) => a.removeAttribute('aria-current'));
-      const cursor = this.pfOne('[data-cursor]');
-      if (cursor) { cursor.classList.remove('is-on', 'is-hover', 'is-down', 'is-ink'); }
+      this.pfQ('[data-cursor]').forEach((c) => c.classList.remove('is-on', 'is-hover', 'is-down', 'is-ink'));
       const spot = this.pfOne('[data-spot]');
       if (spot) { spot.classList.remove('is-on'); }
     }
@@ -1438,14 +1437,18 @@ export class PortfolioMotion {
     });
   }
 
-  /* A ring cursor and a soft accent spotlight follow the mouse. */
+  /* A ring that trails the mouse, a small dot that sticks to it, and a soft accent spotlight. */
   pfCursor(gsap) {
-    const cursor = this.pfOne('[data-cursor]');
+    const ring = this.pfOne('[data-cursor="ring"]');
+    const dot = this.pfOne('[data-cursor="dot"]');
     const spot = this.pfOne('[data-spot]');
-    if (!cursor) { return; }
+    if (!ring || !dot) { return; }
+    const cursor = { classList: { add: (...c) => { ring.classList.add(...c); dot.classList.add(...c); }, remove: (...c) => { ring.classList.remove(...c); dot.classList.remove(...c); }, toggle: (c, on) => { ring.classList.toggle(c, on); dot.classList.toggle(c, on); } } };
     const w = this.pfWin;
-    const cx = gsap.quickTo(cursor, 'x', { duration: 0.32, ease: 'power3.out' });
-    const cy = gsap.quickTo(cursor, 'y', { duration: 0.32, ease: 'power3.out' });
+    const cx = gsap.quickTo(ring, 'x', { duration: 0.42, ease: 'power3.out' });
+    const cy = gsap.quickTo(ring, 'y', { duration: 0.42, ease: 'power3.out' });
+    const dx = gsap.quickTo(dot, 'x', { duration: 0.06, ease: 'power2.out' });
+    const dy = gsap.quickTo(dot, 'y', { duration: 0.06, ease: 'power2.out' });
     const sx = spot ? gsap.quickTo(spot, 'x', { duration: 1.2, ease: 'power3.out' }) : null;
     const sy = spot ? gsap.quickTo(spot, 'y', { duration: 1.2, ease: 'power3.out' }) : null;
     let shown = false;
@@ -1453,11 +1456,11 @@ export class PortfolioMotion {
       if (e.pointerType && e.pointerType !== 'mouse') { return; }
       if (!shown) {
         shown = true;
-        gsap.set(cursor, { x: e.clientX, y: e.clientY });
+        gsap.set([ring, dot], { x: e.clientX, y: e.clientY });
         cursor.classList.add('is-on');
         if (spot) { gsap.set(spot, { x: e.clientX, y: e.clientY }); spot.classList.add('is-on'); }
       }
-      cx(e.clientX); cy(e.clientY);
+      cx(e.clientX); cy(e.clientY); dx(e.clientX); dy(e.clientY);
       if (sx) { sx(e.clientX); sy(e.clientY); }
     }, { passive: true }, true);
     this.pfOn(this.pfDoc, 'mouseout', (e) => {

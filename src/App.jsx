@@ -52,7 +52,8 @@ export default function App() {
       <a className="pf-skip" href="#main">Skip to content</a>
       <div className="pf-spot" data-spot="" aria-hidden="true"></div>
       <div className="pf-grain" data-grain="" aria-hidden="true"></div>
-      <div className="pf-cursor" data-cursor="" aria-hidden="true"><span className="pf-cursor__ring"></span></div>
+      <div className="pf-cursor" data-cursor="ring" aria-hidden="true"><span className="pf-cursor__ring"></span></div>
+      <div className="pf-cursor pf-cursor--dot" data-cursor="dot" aria-hidden="true"><span className="pf-cursor__dot"></span></div>
       {SITE.loader && <Loader />}
       <Nav onToggleTheme={onToggleTheme} isDark={effective === 'dark'} />
       <main id="main">
