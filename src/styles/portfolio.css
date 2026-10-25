@@ -156,6 +156,8 @@ html,.lenis{scrollbar-gutter:stable}
 /* Over an FAQ row the ring sits on the hover band, so it takes the band's text colour. */
 .pf-cursor.is-ink .pf-cursor__ring{border-color:var(--faq-text);background:color-mix(in oklab, var(--faq-text) 10%, transparent)}
 @media (hover: none), (pointer: coarse){ .pf-cursor,.pf-spot{display:none} }
+/* With a mouse the ring is the only cursor: the system pointer is hidden everywhere, links and the 3D stage included. */
+@media (hover: hover) and (pointer: fine){ html,html *{cursor:none !important} }
 
 /* ---------- Loader, from the earlier portfolio ---------- */
 .pf-ld{--cw:clamp(170px, min(27vw, 38vh), 400px);position:fixed;inset:0;z-index:400;display:none;overflow:hidden;background:var(--ground);color:var(--ink);clip-path:inset(0% 0% 0% 0%)}
