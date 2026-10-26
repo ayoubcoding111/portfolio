@@ -153,20 +153,81 @@ function updateHeroExit() {
 window.addEventListener("scroll", updateHeroExit, { passive: true });
 updateHeroExit();
 
-// Wheel assist guarantees "even a small scroll jumps a full page" on
-// desktop. CSS `scroll-snap-type: y mandatory` already does this natively;
-// this just makes trackpads/mice feel instant and consistent. Tall panels
-// (e.g. stacked About on mobile) keep native scrolling.
+// Snap mode manager: fixes the "small scroll down from About yanks me back"
+// pull-back. The instant the user pushes DOWN while on/near About top we
+// kill CSS snap so the browser can't snap back; updateSnapMode re-arms it
+// only once safely back in the Home/About lock zone.
+const aboutSection = document.getElementById("about");
+
+function getAboutTop() {
+  if (aboutSection) return aboutSection.offsetTop;
+  return panels[1] ? panels[1].offsetTop : window.innerHeight;
+}
+
+function setSnapType(t) {
+  if (reduceMotion) return;
+  if (document.documentElement.style.scrollSnapType !== t) {
+    document.documentElement.style.scrollSnapType = t;
+  }
+}
+
+let suspendSnapUntil = 0;
+
+// Re-arm snap only when at/above About top; anything past it stays free
+// so Projects+ scrolls smoothly with zero pull-back.
+function updateSnapMode() {
+  if (reduceMotion) return;
+  if (performance.now() < suspendSnapUntil) {
+    setSnapType("none");
+    return;
+  }
+  const y = window.scrollY;
+  setSnapType(y > getAboutTop() + 24 ? "none" : "y proximity");
+}
+
+window.addEventListener("scroll", updateSnapMode, { passive: true });
+window.addEventListener("resize", updateSnapMode);
+updateSnapMode();
+
+// Wheel assist guarantees "even a small scroll jumps a full page" ONLY for
+// Home <-> About. Everything after About (Projects / Pricing / Footer)
+// keeps native smooth scrolling for that free, expensive feel.
+// CSS uses `scroll-snap-type: y proximity` + snap-align only on Home/About,
+// so Projects+ can rest anywhere without snapping back.
 let snapLock = false;
 window.addEventListener(
   "wheel",
   (e) => {
+    // Escape hatch (runs before every early-return): pushing DOWN while
+    // on/near About top kills snap instantly + 1s cooldown so the whole
+    // gesture stays free and can never yank back mid-scroll.
+    if (!reduceMotion && e.deltaY > 4 && !e.ctrlKey) {
+      const y = window.scrollY;
+      const top = getAboutTop();
+      if (y >= top - 40 && y <= top + 40) {
+        setSnapType("none");
+        suspendSnapUntil = performance.now() + 1000;
+      }
+    }
+
     if (reduceMotion || snapLock || panels.length < 2) return;
     if (Math.abs(e.deltaY) < 18) return;
     // Don't hijack touchpads doing horizontal gestures or pinch-zoom.
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY) || e.ctrlKey) return;
 
     const idx = currentPanelIndex();
+
+    const next =
+      e.deltaY > 0
+        ? Math.min(panels.length - 1, idx + 1)
+        : Math.max(0, idx - 1);
+    if (next === idx) return;
+
+    // Only hijack when LANDING on Home (0) or About (1).
+    // Scrolling TOWARD Projects+ (next >= 2) stays native/smooth.
+    const SNAP_LAST_INDEX = 1;
+    if (next > SNAP_LAST_INDEX) return;
+
     const panel = panels[idx];
     if (!panel) return;
     // If the current panel is taller than the viewport, only snap when
@@ -180,11 +241,6 @@ window.addEventListener(
       if (e.deltaY < 0 && !atTop) return;
     }
 
-    const next =
-      e.deltaY > 0
-        ? Math.min(panels.length - 1, idx + 1)
-        : Math.max(0, idx - 1);
-    if (next === idx) return;
     e.preventDefault();
     snapLock = true;
     panels[next].scrollIntoView({ behavior: "smooth" });
@@ -193,6 +249,42 @@ window.addEventListener(
     }, 1100);
   },
   { passive: false }
+);
+
+// Touch equivalent of the escape hatch: dragging up (scrolling down)
+// from About top kills snap so mobile can't yank back either.
+let lastTouchY = null;
+window.addEventListener(
+  "touchstart",
+  (e) => {
+    if (e.touches.length) lastTouchY = e.touches[0].clientY;
+  },
+  { passive: true }
+);
+window.addEventListener(
+  "touchmove",
+  (e) => {
+    if (reduceMotion || !e.touches.length || lastTouchY === null) return;
+    const touchY = e.touches[0].clientY;
+    const dy = lastTouchY - touchY; // > 0 = scrolling down toward Projects
+    lastTouchY = touchY;
+    if (dy > 4) {
+      const y = window.scrollY;
+      const top = getAboutTop();
+      if (y >= top - 40 && y <= top + 40) {
+        setSnapType("none");
+        suspendSnapUntil = performance.now() + 1000;
+      }
+    }
+  },
+  { passive: true }
+);
+window.addEventListener(
+  "touchend",
+  () => {
+    lastTouchY = null;
+  },
+  { passive: true }
 );
 
 // Active nav-link highlight.

@@ -35,7 +35,9 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
+  /* proximity (not mandatory) so Home/About still lock, but
+     Projects+ can rest anywhere for that free, expensive feel. */
+  scroll-snap-type: y proximity;
 }
 
 body {
@@ -102,8 +104,9 @@ button {
   min-height: 100vh;
   min-height: 100svh;
   width: 100%;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  /* No snap by default — only Home + About lock full-screen.
+     Projects / Pricing / Footer scroll freely and smoothly. */
+  scroll-snap-align: none;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -112,6 +115,23 @@ button {
   overflow: visible;
   background: transparent;
   color: var(--c-white);
+}
+
+/* Hard full-page lock — keep this only for Home -> About.
+   snap-stop:normal (not always) so a small scroll leaving About
+   doesn't get yanked back — JS re-arms snap when you return. */
+.panel.home,
+.panel.about {
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+}
+
+/* Free smooth scroll — explicitly no snap for that expensive feel. */
+#projects,
+#pricing,
+#contact {
+  scroll-snap-align: none;
+  scroll-snap-stop: normal;
 }
 
 .page,
@@ -269,7 +289,7 @@ body.is-blur-bg .bg-overlay {
     90deg,
     var(--c-cyan),
     var(--c-pale-blue),
-    var(--c-plum)
+    white
   );
   transition: transform 0.7s var(--ease-out-soft);
 }
@@ -662,7 +682,7 @@ body.is-blur-bg .bg-overlay {
   display: block;
   width: 2px;
   height: 44px;
-  background: linear-gradient(var(--c-cyan), var(--c-plum));
+  background: linear-gradient(var(--c-cyan), var(--c-white));
   animation: hintDrop 1.8s ease-in-out infinite;
 }
 
@@ -704,7 +724,7 @@ body.is-blur-bg .bg-overlay {
   width: 32px;
   height: 3px;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--c-cyan), #e7bffa);
+  background: linear-gradient(90deg, var(--c-cyan), white);
 }
 
 .section-pad {
@@ -970,7 +990,7 @@ body.is-blur-bg .bg-overlay {
   font-size: 12px;
   font-weight: 700;
   color: var(--c-black);
-  background: linear-gradient(135deg, var(--c-cyan), var(--c-pale-blue));
+  background: linear-gradient(135deg, var(--c-cyan), var(--c-white));
 }
 
 /* Projects / pricing / footer stay transparent so the fixed site

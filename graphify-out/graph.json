@@ -52,6 +52,42 @@
       "source_location": "L140"
     },
     {
+      "id": "script_getabouttop",
+      "label": "getAboutTop()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "updateSnapMode",
+      "file_type": "code",
+      "norm_label": "getabouttop()",
+      "source_file": "script.js",
+      "source_location": "L162"
+    },
+    {
+      "id": "script_setsnaptype",
+      "label": "setSnapType()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "updateSnapMode",
+      "file_type": "code",
+      "norm_label": "setsnaptype()",
+      "source_file": "script.js",
+      "source_location": "L167"
+    },
+    {
+      "id": "script_updatesnapmode",
+      "label": "updateSnapMode()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 1,
+      "community_name": "updateSnapMode",
+      "file_type": "code",
+      "norm_label": "updatesnapmode()",
+      "source_file": "script.js",
+      "source_location": "L178"
+    },
+    {
       "id": "script",
       "label": "script.js",
       "_origin": "ast",
@@ -63,6 +99,17 @@
       "source_location": "L1"
     },
     {
+      "id": "script_aboutsection",
+      "label": "aboutSection",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "script.js",
+      "file_type": "code",
+      "norm_label": "aboutsection",
+      "source_file": "script.js",
+      "source_location": "L160"
+    },
+    {
       "id": "script_canvas",
       "label": "canvas",
       "_origin": "ast",
@@ -71,7 +118,7 @@
       "file_type": "code",
       "norm_label": "canvas",
       "source_file": "script.js",
-      "source_location": "L230"
+      "source_location": "L322"
     },
     {
       "id": "script_herocontent",
@@ -137,7 +184,7 @@
       "file_type": "code",
       "norm_label": "navlinks",
       "source_file": "script.js",
-      "source_location": "L199"
+      "source_location": "L291"
     },
     {
       "id": "script_panels",
@@ -170,7 +217,7 @@
       "file_type": "code",
       "norm_label": "skillstrack",
       "source_file": "script.js",
-      "source_location": "L219"
+      "source_location": "L311"
     },
     {
       "id": "script_video",
@@ -181,10 +228,34 @@
       "file_type": "code",
       "norm_label": "video",
       "source_file": "script.js",
-      "source_location": "L229"
+      "source_location": "L321"
     }
   ],
   "links": [
+    {
+      "source": "script_updatesnapmode",
+      "target": "script_setsnaptype",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "script.js",
+      "source_location": "L181",
+      "weight": 1.0
+    },
+    {
+      "source": "script_updatesnapmode",
+      "target": "script_getabouttop",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "script.js",
+      "source_location": "L185",
+      "weight": 1.0
+    },
     {
       "source": "script",
       "target": "script_panels",
@@ -231,24 +302,35 @@
     },
     {
       "source": "script",
-      "target": "script_navlinks",
+      "target": "script_aboutsection",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "script.js",
-      "source_location": "L199",
+      "source_location": "L160",
       "weight": 1.0
     },
     {
       "source": "script",
-      "target": "script_skillstrack",
+      "target": "script_getabouttop",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "script.js",
-      "source_location": "L219",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "script",
+      "target": "script_setsnaptype",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "script.js",
+      "source_location": "L167",
       "weight": 1.0
     },
     {
@@ -264,13 +346,35 @@
     },
     {
       "source": "script",
+      "target": "script_navlinks",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "script.js",
+      "source_location": "L291",
+      "weight": 1.0
+    },
+    {
+      "source": "script",
+      "target": "script_skillstrack",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "script.js",
+      "source_location": "L311",
+      "weight": 1.0
+    },
+    {
+      "source": "script",
       "target": "script_video",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "script.js",
-      "source_location": "L229",
+      "source_location": "L321",
       "weight": 1.0
     },
     {
@@ -281,7 +385,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "script.js",
-      "source_location": "L230",
+      "source_location": "L322",
       "weight": 1.0
     },
     {
@@ -350,8 +454,20 @@
       "source_file": "script.js",
       "source_location": "L153",
       "weight": 1.0
+    },
+    {
+      "source": "script",
+      "target": "script_updatesnapmode",
+      "relation": "indirect_call",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "context": "argument",
+      "source_file": "script.js",
+      "source_location": "L188",
+      "weight": 1.0
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7aa4582bf981d056a8be062590c180b01b546b43"
+  "built_at_commit": "2a9135212ad198fa857cda2d1cecca72fc57a424"
 }

@@ -1,14 +1,14 @@
 {
   "script.js": {
-    "mtime": 1789516965.1155088,
-    "seen": 1789517459.890243,
-    "ast_hash": "22b8a872280542afc3d9f13a51cefe14",
+    "mtime": 1789568101.404213,
+    "seen": 1789568104.274916,
+    "ast_hash": "beb68c1e26096f1ace99ec9758940f85",
     "semantic_hash": ""
   },
   "index.html": {
-    "mtime": 1789517977.248313,
-    "seen": 1789517979.9858084,
-    "ast_hash": "5ec74d9d27624cb14deb061b04fd26b1",
+    "mtime": 1789518293.783798,
+    "seen": 1789518296.6268342,
+    "ast_hash": "81b6bacb255631bf2dfda8c93116bc16",
     "semantic_hash": ""
   },
   "assets/logo.png": {
@@ -27,12 +27,6 @@
     "mtime": 1789505950.422366,
     "seen": 1789513573.0057468,
     "ast_hash": "ee006c06a0979fd2a37466f52860d32a",
-    "semantic_hash": ""
-  },
-  "assets/about-bg.jpg": {
-    "mtime": 1789517418.2599275,
-    "seen": 1789517459.89025,
-    "ast_hash": "67d75a451e91bcfd4a915e6f0a8e2350",
     "semantic_hash": ""
   }
 }
