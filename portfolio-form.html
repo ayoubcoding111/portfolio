@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio Info Form</title>
+<style>
+  :root { --bg:#f6f6f4; --card:#fff; --ink:#15151a; --mute:#6b6b76; --line:#dcdcd6; --acc:#2B45FF; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#0f0f12; --card:#18181d; --ink:#ececf0; --mute:#9a9aa6; --line:#2c2c34; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif; padding:24px 16px 120px; }
+  main { max-width:760px; margin:0 auto; }
+  h1 { font-size:28px; margin:0 0 4px; }
+  .sub { color:var(--mute); margin:0 0 24px; }
+  fieldset { background:var(--card); border:1px solid var(--line); border-radius:12px; margin:0 0 20px; padding:18px 20px 8px; }
+  legend { font-weight:700; padding:0 8px; font-size:18px; }
+  legend span { color:var(--acc); margin-right:6px; }
+  label { display:block; font-size:14px; font-weight:600; margin:0 0 14px; }
+  label small { display:block; font-weight:400; color:var(--mute); }
+  input, textarea, select { width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--bg); color:var(--ink); font:inherit; }
+  input:focus, textarea:focus, select:focus { outline:2px solid var(--acc); outline-offset:1px; }
+  textarea { min-height:84px; resize:vertical; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:0 16px; }
+  @media (max-width:600px) { .row { grid-template-columns:1fr; } }
+  .proj { border-top:1px dashed var(--line); padding-top:14px; margin-top:6px; }
+  .proj h3 { margin:0 0 10px; font-size:15px; }
+  .bar { position:fixed; left:0; right:0; bottom:0; background:var(--card); border-top:1px solid var(--line); padding:12px 16px; display:flex; gap:12px; justify-content:center; align-items:center; flex-wrap:wrap; }
+  button { background:var(--acc); color:#fff; border:0; border-radius:8px; padding:11px 20px; font:inherit; font-weight:600; cursor:pointer; }
+  button.ghost { background:transparent; color:var(--ink); border:1px solid var(--line); }
+  #msg { color:var(--mute); font-size:14px; }
+  #out { display:none; width:100%; min-height:200px; margin-top:12px; font-family:ui-monospace,Consolas,monospace; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Portfolio info</h1>
+  <p class="sub">Fill what you can, leave the rest blank. Then press <b>Copy my answers</b> and paste them into the chat. Your input is saved in this browser as you type.</p>
+
+  <form id="f" autocomplete="off">
+
+  <fieldset><legend><span>1</span>Basics</legend>
+    <div class="row">
+      <label>Full name<input name="full_name"></label>
+      <label>Name shown on the site<small>Currently "Ayoub"</small><input name="display_name"></label>
+    </div>
+    <label>Headline under the name<small>Currently "Full-Stack Engineer"</small><input name="headline"></label>
+    <label>Hero intro line<small>Currently "I build web products end to end, from the interface you touch to the systems you never see."</small><textarea name="hero_line"></textarea></label>
+    <div class="row">
+      <label>Email<input name="email" type="email"></label>
+      <label>LinkedIn URL<input name="linkedin"></label>
+    </div>
+    <div class="row">
+      <label>GitHub URL<small>Currently github.com/ayoubcoding111</small><input name="github"></label>
+      <label>Based in / time zone<small>Currently Algeria, GMT+1</small><input name="location"></label>
+    </div>
+    <label>Availability
+      <select name="availability"><option value="">Choose…</option><option>Full-time only</option><option>Freelance only</option><option>Both full-time and freelance</option></select>
+    </label>
+  </fieldset>
+
+  <fieldset><legend><span>2</span>About</legend>
+    <label>Short bio in your own words<small>Where you started, what you've built, what you focus on now</small><textarea name="bio"></textarea></label>
+    <div class="row">
+      <label>Years of experience<input name="years"></label>
+      <label>Education<input name="education"></label>
+    </div>
+    <label>Past jobs or roles to mention<textarea name="jobs"></textarea></label>
+    <label>Principles<small>Keep the current three, or write your own</small><textarea name="principles"></textarea></label>
+  </fieldset>
+
+  <fieldset><legend><span>3</span>Projects</legend>
+    <div class="proj"><h3>Project 1: Japoni Auto</h3>
+      <div class="row">
+        <label>Stack<input name="p1_stack"></label>
+        <label>Your role<input name="p1_role"></label>
+        <label>Live URL<input name="p1_demo"></label>
+        <label>GitHub repo (or "none")<input name="p1_repo"></label>
+      </div>
+    </div>
+    <div class="proj"><h3>Project 2</h3>
+      <div class="row">
+        <label>Name<input name="p2_name"></label>
+        <label>One-line summary<input name="p2_summary"></label>
+        <label>Stack<input name="p2_stack"></label>
+        <label>Live URL / GitHub repo<input name="p2_links"></label>
+      </div>
+    </div>
+    <div class="proj"><h3>Project 3</h3>
+      <div class="row">
+        <label>Name<input name="p3_name"></label>
+        <label>One-line summary<input name="p3_summary"></label>
+        <label>Stack<input name="p3_stack"></label>
+        <label>Live URL / GitHub repo<input name="p3_links"></label>
+      </div>
+    </div>
+    <div class="proj"><h3>Project 4</h3>
+      <div class="row">
+        <label>Name<input name="p4_name"></label>
+        <label>One-line summary<input name="p4_summary"></label>
+        <label>Stack<input name="p4_stack"></label>
+        <label>Live URL / GitHub repo<input name="p4_links"></label>
+      </div>
+    </div>
+    <label style="margin-top:14px">Screenshots<small>Folder path where the images are, or "skip for now"</small><input name="screenshots"></label>
+  </fieldset>
+
+  <fieldset><legend><span>4</span>Skills and stack</legend>
+    <label>Frontend tools you use<input name="sk_front"></label>
+    <label>Backend tools you use<input name="sk_back"></label>
+    <label>Databases you use<input name="sk_db"></label>
+    <label>DevOps and tools you use<input name="sk_devops"></label>
+    <label>Stack logos<small>Which of the current 16 to remove, and which to add</small><textarea name="stack_changes"></textarea></label>
+  </fieldset>
+
+  <fieldset><legend><span>5</span>FAQ</legend>
+    <div class="row">
+      <label>Starting price or day rate<small>Leave blank to show none</small><input name="faq_price"></label>
+      <label>Timeline: marketing site<input name="faq_site_weeks" placeholder="e.g. 2–4 weeks"></label>
+      <label>Timeline: web app<input name="faq_app_weeks" placeholder="e.g. 6–12 weeks"></label>
+      <label>Extra hours you cover besides GMT+1<input name="faq_hours"></label>
+      <label>Open to relocating?
+        <select name="faq_relocate"><option value="">Choose…</option><option>Yes</option><option>No, remote only</option></select>
+      </label>
+      <label>Free bug-fix weeks after launch<input name="faq_support"></label>
+    </div>
+  </fieldset>
+
+  <fieldset><legend><span>6</span>Contact form</legend>
+    <label>Form endpoint<small>For example a Formspree URL. Leave blank to keep the form unconnected.</small><input name="endpoint"></label>
+  </fieldset>
+
+  <fieldset><legend><span>7</span>Work history section</legend>
+    <label>Bring back an Experience section?
+      <select name="exp_yes"><option value="">Choose…</option><option>No</option><option>Yes</option></select>
+    </label>
+    <label>If yes: roles, companies, dates and achievements<textarea name="exp_details"></textarea></label>
+  </fieldset>
+
+  </form>
+
+  <textarea id="out" readonly aria-label="Your answers"></textarea>
+</main>
+
+<div class="bar">
+  <button type="button" id="copy">Copy my answers</button>
+  <button type="button" class="ghost" id="clear">Clear form</button>
+  <span id="msg" role="status"></span>
+</div>
+
+<script>
+(function () {
+  var f = document.getElementById('f'), out = document.getElementById('out'), msg = document.getElementById('msg');
+  var KEY = 'portfolio-form-v1';
+  function load() { try { var d = JSON.parse(localStorage.getItem(KEY) || '{}'); Object.keys(d).forEach(function (k) { if (f.elements[k]) f.elements[k].value = d[k]; }); } catch (e) {} }
+  function data() { var d = {}; Array.prototype.forEach.call(f.elements, function (el) { if (el.name) d[el.name] = el.value; }); return d; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(data())); } catch (e) {} }
+  function text() {
+    var lines = ['PORTFOLIO ANSWERS'];
+    Array.prototype.forEach.call(f.querySelectorAll('fieldset'), function (fs) {
+      var sec = [];
+      Array.prototype.forEach.call(fs.querySelectorAll('label'), function (lb) {
+        var el = lb.querySelector('input,textarea,select');
+        if (el && el.value.trim()) {
+          var title = lb.childNodes[0].textContent.trim();
+          var proj = el.closest('.proj'); var p = proj ? proj.querySelector('h3').textContent + ' / ' : '';
+          sec.push('- ' + p + title + ': ' + el.value.trim());
+        }
+      });
+      if (sec.length) { lines.push('', fs.querySelector('legend').textContent.replace(/^(\d)/, '$1. ')); lines = lines.concat(sec); }
+    });
+    return lines.join('\n');
+  }
+  f.addEventListener('input', save);
+  document.getElementById('copy').addEventListener('click', function () {
+    var t = text(); out.style.display = 'block'; out.value = t; out.select();
+    var done = function () { msg.textContent = 'Copied. Paste it into the chat.'; };
+    var fail = function () { msg.textContent = 'Select the text below and copy it manually.'; };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, function () { try { document.execCommand('copy') ? done() : fail(); } catch (e) { fail(); } });
+    else { try { document.execCommand('copy') ? done() : fail(); } catch (e) { fail(); } }
+  });
+  document.getElementById('clear').addEventListener('click', function () {
+    if (!confirm('Clear every answer?')) return;
+    f.reset(); out.style.display = 'none'; out.value = ''; try { localStorage.removeItem(KEY); } catch (e) {} msg.textContent = 'Cleared.';
+  });
+  load();
+})();
+</script>
+</body>
+</html>
