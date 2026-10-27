@@ -59,9 +59,9 @@ export default function App() {
       <main id="main">
         <Hero />
         <About />
+        <Projects />
         <Skills />
         <Stack theme={effective} />
-        <Projects />
         <Faq />
         <Contact />
       </main>
