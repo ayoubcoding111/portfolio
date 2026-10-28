@@ -148,21 +148,23 @@ html,.lenis{scrollbar-gutter:stable}
 /* Under everything, the keyboard's fixed canvas (z -1) included, so the light falls behind the 3D models like the text. */
 .pf-spot{position:fixed;left:0;top:0;z-index:-2;width:920px;height:920px;margin:-460px 0 0 -460px;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side, color-mix(in oklab, var(--accent) var(--spot, 15%), transparent), transparent);opacity:0;transition:opacity .8s var(--ease-out)}
 .pf-spot.is-on{opacity:1}
-.pf-cursor{position:fixed;left:0;top:0;z-index:140;width:0;height:0;pointer-events:none;opacity:0;transition:opacity .35s ease}
+.pf-cursor{position:fixed;left:0;top:0;z-index:410;width:0;height:0;pointer-events:none;opacity:0;transition:opacity .35s ease}
 .pf-cursor.is-on{opacity:1}
 .pf-cursor__ring{position:absolute;left:-18px;top:-18px;width:36px;height:36px;border-radius:50%;border:1px solid var(--cursor-ring);transition:transform .5s var(--ease-out),background-color .35s ease,border-color .35s ease}
 .pf-cursor.is-hover .pf-cursor__ring{transform:scale(1.55);border-color:var(--accent-ink);background:color-mix(in oklab, var(--accent) 12%, transparent)}
 .pf-cursor.is-down .pf-cursor__ring{transform:scale(.8)}
 /* The dot sticks to the mouse; difference blending keeps it visible on light and dark. On a link it shrinks into the ring's fill, on press it swells. */
-.pf-cursor--dot{z-index:141;mix-blend-mode:difference}
+.pf-cursor--dot{z-index:411;mix-blend-mode:difference}
 .pf-cursor__dot{position:absolute;left:-6px;top:-6px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .35s var(--ease-out)}
 .pf-cursor--dot.is-hover .pf-cursor__dot{transform:scale(.5)}
 .pf-cursor--dot.is-down .pf-cursor__dot{transform:scale(2.2)}
 /* Over an FAQ row the ring sits on the hover band, so it takes the band's text colour. */
 .pf-cursor.is-ink .pf-cursor__ring{border-color:var(--faq-text);background:color-mix(in oklab, var(--faq-text) 10%, transparent)}
 @media (hover: none), (pointer: coarse){ .pf-cursor,.pf-spot{display:none} }
-/* With a mouse the ring is the only cursor: the system pointer is hidden everywhere, links and the 3D stage included. */
-@media (hover: hover) and (pointer: fine){ html,html *{cursor:none !important} }
+/* With a mouse the ring is the only cursor once it shows: the system pointer is hidden everywhere, links and the 3D stage
+   included. lib/motion.js (pfCursor) adds .pf-has-cursor on the first mouse move; until then, loading screen included, the
+   system pointer stays. */
+@media (hover: hover) and (pointer: fine){ html.pf-has-cursor,html.pf-has-cursor *{cursor:none !important} }
 
 /* ---------- Loader, from the earlier portfolio ---------- */
 .pf-ld{--cw:clamp(170px, min(27vw, 38vh), 400px);position:fixed;inset:0;z-index:400;display:none;overflow:hidden;background:var(--ground);color:var(--ink);clip-path:inset(0% 0% 0% 0%)}

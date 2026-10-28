@@ -430,6 +430,7 @@ export class PortfolioMotion {
       if (nav) { nav.classList.remove('is-scrolled', 'is-hidden'); }
       this.pfQ('.pf-nav__list a[aria-current]').forEach((a) => a.removeAttribute('aria-current'));
       this.pfQ('[data-cursor]').forEach((c) => c.classList.remove('is-on', 'is-hover', 'is-down', 'is-ink'));
+      this.pfDoc.documentElement.classList.remove('pf-has-cursor');
       const spot = this.pfOne('[data-spot]');
       if (spot) { spot.classList.remove('is-on'); }
     }
@@ -1458,6 +1459,7 @@ export class PortfolioMotion {
         shown = true;
         gsap.set([ring, dot], { x: e.clientX, y: e.clientY });
         cursor.classList.add('is-on');
+        this.pfDoc.documentElement.classList.add('pf-has-cursor');
         if (spot) { gsap.set(spot, { x: e.clientX, y: e.clientY }); spot.classList.add('is-on'); }
       }
       cx(e.clientX); cy(e.clientY); dx(e.clientX); dy(e.clientY);

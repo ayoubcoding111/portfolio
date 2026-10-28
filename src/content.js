@@ -56,8 +56,7 @@ export const PROJECTS = [
     details: [{ src: '/projects/oriel-anatomy.webp', alt: 'Oriel: the exploded anatomy, seven labelled layers' }, { src: '/projects/oriel-movement.webp', alt: 'Oriel: a close view of the Calibre O-1 movement' }] }
 ];
 
-/* PLACEHOLDER: drafted answers. Fill in each [bracket] with your own details, and rewrite any answer that doesn't sound
-   like you. label: the small tag before the question. tags: the words and icons that scroll past when a mouse is over
+/* Drafted answers: rewrite any answer that doesn't sound like you. label: the small tag before the question. tags: the words and icons that scroll past when a mouse is over
    the row (the icons are in lib/faqIcons.js). */
 export const FAQ_INTRO = 'What clients and hiring teams usually ask before we work together. Don’t see your question?';
 
@@ -65,13 +64,10 @@ const tag = (word, icon) => ({ word, icon });
 
 export const FAQ = [
   { id: 'faq-pricing', label: 'Pricing', q: 'How do you price a project?',
-    a: 'Once the scope is clear, after a short call and a written brief, you get a fixed quote. Open-ended work, like a long-running product or a steady stream of features, is billed weekly instead. [Add a starting price or day rate here if you want to show one.]',
+    a: 'Once the scope is clear, after a short call and a written brief, you get a fixed quote. Open-ended work, like a long-running product or a steady stream of features, is billed weekly instead.',
     tags: [tag('Fixed quote', FAQ_ICONS.billList), tag('Clear scope', FAQ_ICONS.checklistMinimalistic), tag('Weekly billing', FAQ_ICONS.calendar)] },
-  { id: 'faq-timeline', label: 'Timeline', q: 'How long does a project take?',
-    a: 'It depends on the scope. A focused marketing site usually takes [2–4] weeks, and a web app with accounts, data and an admin area [6–12]. Before I start you get a plan with milestones, and every week a working preview you can click through.',
-    tags: [tag('Discovery', FAQ_ICONS.magnifier), tag('Weekly previews', FAQ_ICONS.eye), tag('Launch', FAQ_ICONS.rocket2)] },
   { id: 'faq-remote', label: 'Remote', q: 'Do you work remotely, and in which time zone?',
-    a: 'Yes. I’m based in Algeria (GMT+1), so my working day overlaps with Europe’s. [Add any other hours you cover, like the US East Coast morning.] Progress is written down as I go, so work keeps moving between calls.',
+    a: 'Yes. I’m based in Algeria (GMT+1), so my working day overlaps with Europe’s. Progress is written down as I go, so work keeps moving between calls.',
     tags: [tag('Based in Algeria', FAQ_ICONS.mapPoint), tag('GMT+1', FAQ_ICONS.clockCircle), tag('Written updates', FAQ_ICONS.chatRoundDots)] },
   { id: 'faq-stack', label: 'Stack', q: 'Which technologies do you work with?',
     a: 'Mostly JavaScript from end to end: React, Next.js and Tailwind CSS in the browser, Node.js and Express with REST APIs on the server, MySQL for data, shipped on Vercel. I design interfaces in Figma and add 3D with Three.js when a project calls for it. If your team already has a stack, I’ll work in yours.',
@@ -80,7 +76,7 @@ export const FAQ = [
     a: 'Yes. I’m available now for a part-time internship alongside my studies at USTHB, and I still take on freelance projects. I like owning a feature from the database up to the interface, as I did on the restaurant ordering system I built and led for my USTHB team.',
     tags: [tag('Internship', FAQ_ICONS.caseRound), tag('Part-time', FAQ_ICONS.clockCircle), tag('Freelance', FAQ_ICONS.programming)] },
   { id: 'faq-support', label: 'Support', q: 'What happens after launch?',
-    a: 'You get the code, the accounts and short docs on how to run and change it, all in your name. [I fix bugs for the first N weeks at no cost], and I can stay on for maintenance or new features after that.',
+    a: 'You get the code, the accounts and short docs on how to run and change it, all in your name, and I can stay on for maintenance or new features after that.',
     tags: [tag('Your code', FAQ_ICONS.key), tag('Clear docs', FAQ_ICONS.documentText), tag('Maintenance', FAQ_ICONS.settingsMinimalistic)] }
 ];
 
