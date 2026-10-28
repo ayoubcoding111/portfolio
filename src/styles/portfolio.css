@@ -402,6 +402,10 @@ html,.lenis{scrollbar-gutter:stable}
 .pf-chrome{display:flex;flex:none;align-items:center;gap:6px;height:1.75rem;padding:0 .75rem;border-bottom:1px solid var(--line);background:var(--chrome-bg)}
 .pf-chrome i{width:8px;height:8px;border-radius:50%;background:var(--line-strong)}
 .pf-url{margin-left:.5rem;padding:.1rem .6rem;border-radius:999px;background:var(--line);font-family:var(--f-mono);font-size:.6875rem;color:var(--muted)}
+/* Capped so a long address ends before the top-right floating shot instead of under it (with its 3D lift, that shot's left
+   edge sits at about 70% of the frame). */
+a.pf-url{min-width:0;max-width:calc(69.5% - 3.5rem);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-decoration:none;transition:color .2s ease, background-color .2s ease}
+@media (hover: hover) and (pointer: fine){ a.pf-url:hover{color:var(--ink);background:var(--line-strong)} }
 .pf-shot--f1 .pf-chrome,.pf-shot--f2 .pf-chrome{gap:4px;height:1.1rem;padding:0 .45rem}
 .pf-shot--f1 .pf-chrome i,.pf-shot--f2 .pf-chrome i{width:5px;height:5px}
 .pf-card__ph{position:relative;display:grid;flex:1;place-items:center;background-color:var(--tint-1);background-image:linear-gradient(var(--line) 1px, transparent 1px),linear-gradient(90deg, var(--line) 1px, transparent 1px);background-size:2.5rem 2.5rem;background-position:center;transition:transform 1s var(--ease-out)}

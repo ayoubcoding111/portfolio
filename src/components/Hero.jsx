@@ -22,7 +22,7 @@ export default function Hero() {
       <canvas className="pf-gl" data-gl="" aria-hidden="true"></canvas>
       <div className="pf-hero__shade" aria-hidden="true"></div>
       <div className="pf-wrap pf-hero__inner">
-        <p className="pf-hero__role">Full-Stack Engineer</p>
+        <p className="pf-hero__role">Full-Stack Developer</p>
         <h1 className="pf-name" id="hero-name">
           <span className="pf-sr">Ayoub</span>
           <span className="pf-name__drift" aria-hidden="true">

@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="pf-wrap pf-hwf-top">
         <div className="pf-hwf-brand">
           <strong><span className="pf-pulse" aria-hidden="true"></span>Ayoub</strong>
-          <span>©{new Date().getFullYear()} · Full-stack engineer</span>
+          <span>©{new Date().getFullYear()} · Full-stack developer</span>
           <span>Algeria · Working worldwide</span>
         </div>
         <nav className="pf-hwf-col" aria-label="Explore">

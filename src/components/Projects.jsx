@@ -65,7 +65,7 @@ export default function Projects() {
               <article className="pf-card__inner" aria-labelledby={p.id + '-title'}>
                 <div className="pf-card__media" data-tilt="">
                   <div className="pf-card__stage" data-tilt-stage="">
-                    <div className="pf-shot pf-shot--main"><div className="pf-chrome"><i></i><i></i><i></i><span className="pf-url">{p.url}</span></div><div className="pf-card__ph pf-card__ph--media"><Shot media={p.main} /></div><span className="pf-glare" data-glare=""></span></div>
+                    <div className="pf-shot pf-shot--main"><div className="pf-chrome"><i></i><i></i><i></i>{p.url && <a className="pf-url" href={'https://' + p.url} target="_blank" rel="noopener noreferrer">{p.url}<span className="pf-sr"> (opens in a new tab)</span></a>}</div><div className="pf-card__ph pf-card__ph--media"><Shot media={p.main} /></div><span className="pf-glare" data-glare=""></span></div>
                     {p.details.map((d, i) => (
                       <div className={'pf-shot pf-shot--f' + (i + 1)} data-z={i ? '110' : '70'} key={d.src}><div className="pf-chrome"><i></i><i></i><i></i></div><div className="pf-card__ph pf-card__ph--media"><Shot media={d} /></div></div>
                     ))}
