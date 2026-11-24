@@ -53,7 +53,13 @@ export const PROJECTS = [
     details: [{ src: '/projects/dental-ba.webp', alt: 'Pacific Dental Clinic: the before and after slider' }, { src: '/projects/dental-contact.webp', alt: 'Pacific Dental Clinic: the appointment booking form' }] },
   { id: 'p4', title: 'Oriel', summary: 'A scroll-driven concept site for an independent watchmaker: a 3D watch built entirely in code comes apart layer by layer, dives into the movement, then rebuilds in the metal and dial you pick.', stack: ['Three.js', 'GSAP', 'Lenis', 'Vite'], url: 'oriel-seven.vercel.app',
     main: { video: '/projects/oriel-reel.mp4', poster: '/projects/oriel-poster.webp', alt: 'Oriel: the hero with a 3D watch beside the headline “Time, taken apart.”' },
-    details: [{ src: '/projects/oriel-anatomy.webp', alt: 'Oriel: the exploded anatomy, seven labelled layers' }, { src: '/projects/oriel-movement.webp', alt: 'Oriel: a close view of the Calibre O-1 movement' }] }
+    details: [{ src: '/projects/oriel-anatomy.webp', alt: 'Oriel: the exploded anatomy, seven labelled layers' }, { src: '/projects/oriel-movement.webp', alt: 'Oriel: a close view of the Calibre O-1 movement' }] },
+  { id: 'p5', title: 'Chouchou Tours', summary: 'A concept homepage for a travel agency in Algiers that has no website: private guided visits, day trips and circuits à la carte anywhere in Algeria, in a 9-seat vehicle, with a guesthouse in Algiers.', stack: ['Vite', 'JavaScript', 'CSS'], url: 'agence-de-voyage-plum.vercel.app',
+    main: { src: '/projects/chouchou-main.webp', alt: 'Chouchou Tours: the hero of the private tours of Algeria homepage' },
+    details: [{ src: '/projects/chouchou-trips.webp', alt: 'Chouchou Tours: the featured trips grid' }, { src: '/projects/chouchou-people.webp', alt: 'Chouchou Tours: the people section' }] },
+  { id: 'p6', title: 'Mahdi, Graphic Designer', summary: 'A one-page static portfolio for a graphic designer: brand identities, posters and packaging people remember, in plain HTML, CSS and JavaScript.', stack: ['HTML', 'CSS', 'JavaScript'], url: 'designer-portfolio-smoky-tau.vercel.app',
+    main: { video: '/projects/mahdi-reel.mp4', poster: '/projects/mahdi-poster.webp', alt: 'Mahdi, Graphic Designer: a short scroll through the portfolio' },
+    details: [{ src: '/projects/mahdi-work.webp', alt: 'Mahdi, Graphic Designer: the work section' }, { src: '/projects/mahdi-billboard.webp', alt: 'Mahdi, Graphic Designer: a billboard poster project' }] }
 ];
 
 /* Drafted answers: rewrite any answer that doesn't sound like you. label: the small tag before the question. tags: the words and icons that scroll past when a mouse is over

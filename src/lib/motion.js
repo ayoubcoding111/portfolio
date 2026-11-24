@@ -9,6 +9,7 @@ import { FORM_ENDPOINT } from '../content.js';
 import { pfClamp } from './util.js';
 import { pfField } from './field.js';
 import { pfHalftone } from './halftone.js';
+import { stableViewH } from './viewport.js';
 
 const PF_TZ = SITE.timeZone;
 const PF_SITE_STRICTNESS = SITE.siteStrictness;
@@ -578,7 +579,7 @@ export class PortfolioMotion {
 
   pfViewH() {
     const sc = this.pfScroller;
-    return sc && sc !== this.pfWin ? sc.clientHeight : this.pfWin.innerHeight;
+    return sc && sc !== this.pfWin ? sc.clientHeight : stableViewH();
   }
 
   /* Speed limit. Through the hero's scroll range, the Skills story and the keyboard's flight (the capped ranges, kept in

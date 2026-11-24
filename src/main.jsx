@@ -1,6 +1,9 @@
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
 import './styles/portfolio.css';
+import { startViewport } from './lib/viewport.js';
+
+startViewport();
 
 // The page always opens at the top, under the loader. A restored scroll position would also start ScrollTrigger with
 // one-shot reveals already passed, and those remove themselves mid-setup.
