@@ -32,9 +32,9 @@ export const SKILLS = {
 
 /* The tools in each layer match the CV. story: the chapter's headline in the scroll story. */
 export const LAYERS = [
-  { idx: '01', title: 'Frontend', kicker: 'What people see and touch', story: 'It starts with a click.', text: 'Accessible components, responsive layouts and motion with a purpose, fast on every device.', label: 'Frontend tools', tools: ['React', 'Next.js', 'JavaScript', 'Tailwind CSS', 'Three.js', 'Figma', 'UI/UX Design'] },
-  { idx: '02', title: 'Backend', kicker: 'Logic, APIs and integrations', story: 'The request reaches the API.', text: 'REST APIs in Express with secure logins: bcrypt passwords, role-based access and brute-force lockout, plus validation and clear errors.', label: 'Backend tools', tools: ['Node.js', 'Express', 'REST APIs'] },
-  { idx: '03', title: 'Databases', kicker: 'Where data lives and stays correct', story: 'The data is written, and stays correct.', text: 'Relational models in MySQL that keep the numbers a business needs and delete personal data it no longer needs.', label: 'Database tools', tools: ['MySQL', 'SQL'] },
+  { idx: '01', title: 'Frontend', kicker: 'What people see and touch', story: 'It starts with a click.', text: 'Accessible, responsive interfaces with purposeful motion.', label: 'Frontend tools', tools: ['React', 'Next.js', 'JavaScript', 'Tailwind CSS', 'Three.js', 'Figma', 'UI/UX Design'] },
+  { idx: '02', title: 'Backend', kicker: 'Logic, APIs and integrations', story: 'The request reaches the API.', text: 'REST APIs in Express with secure logins and role-based access.', label: 'Backend tools', tools: ['Node.js', 'Express', 'REST APIs'] },
+  { idx: '03', title: 'Databases', kicker: 'Where data lives and stays correct', story: 'The data is written, and stays correct.', text: 'Relational models in MySQL that keep the data correct.', label: 'Database tools', tools: ['MySQL', 'SQL'] },
   { idx: '04', title: 'DevOps & Tools', kicker: 'How it ships and stays up', story: 'It all ships, and stays up.', text: 'Git and GitHub for every change, deployed on Vercel and Railway.', label: 'DevOps tools', tools: ['Git', 'GitHub', 'Vercel', 'Railway', 'Linux'] }
 ];
 
@@ -42,22 +42,22 @@ export const LAYERS = [
    docs/screenshots). `main` is the big shot (an image, or a video with a poster); `details` are the two floating shots.
    url: the live site, shown in the frame and linked; leave it out for a project with no live site. */
 export const PROJECTS = [
-  { id: 'p1', title: 'Redline Motors', summary: 'A dark, motion-led concept site for a car showroom in Austin, Texas: a cinematic intro, a pinned gallery of the cars on the floor and an enquiry that writes itself up for WhatsApp or email.', stack: ['React', 'Vite', 'GSAP', 'Lenis'], url: 'redline-motors.vercel.app',
+  { id: 'p1', title: 'Redline Motors', summary: 'A dark, motion-led concept site for a car showroom, with a pinned car gallery and a WhatsApp or email enquiry.', stack: ['React', 'Vite', 'GSAP', 'Lenis'], url: 'redline-motors.vercel.app',
     main: { video: '/projects/redline-reel.mp4', poster: '/projects/redline-hero.webp', alt: 'Redline Motors: the showroom warms up, then the hero with a black BMW' },
     details: [{ src: '/projects/redline-cars.webp', alt: 'Redline Motors: the “On the floor” car gallery' }, { src: '/projects/redline-dialog.webp', alt: 'Redline Motors: the car details dialog for a Jeep Wrangler Rubicon' }] },
-  { id: 'p2', title: 'Delicious Restaurant', summary: 'A full-stack food ordering platform: customers order and track their food live, staff run a kitchen dashboard and admins get analytics, in English, French and Arabic.', stack: ['Node.js', 'MySQL', 'Vanilla JS'],
+  { id: 'p2', title: 'Delicious Restaurant', summary: 'A full-stack food ordering platform with live order tracking, a kitchen dashboard and admin analytics, in English, French and Arabic.', stack: ['Node.js', 'MySQL', 'Vanilla JS'],
     main: { video: '/projects/restaurant-reel.mp4', poster: '/projects/restaurant-poster.webp', alt: 'Delicious Restaurant: the animated hero with the Tacos, Drinks and Family Pack marquee' },
     details: [{ src: '/projects/restaurant-dishes.webp', alt: 'Delicious Restaurant: the signature dishes reel' }, { src: '/projects/restaurant-admin.webp', alt: 'Delicious Restaurant: the admin analytics dashboard' }] },
-  { id: 'p3', title: 'Pacific Dental Clinic', summary: 'A bilingual website for a dental clinic in Algiers, with draggable before and after results, patient reviews and an appointment form, in plain HTML, CSS and JavaScript.', stack: ['HTML', 'CSS', 'JavaScript'], url: 'pacific-clinic.vercel.app',
+  { id: 'p3', title: 'Pacific Dental Clinic', summary: 'A bilingual dental clinic site with a before and after slider, reviews and an appointment form.', stack: ['HTML', 'CSS', 'JavaScript'], url: 'pacific-clinic.vercel.app',
     main: { src: '/projects/dental-main.webp', alt: 'Pacific Dental Clinic: the hero with a smiling patient and the Prendre RDV button' },
     details: [{ src: '/projects/dental-ba.webp', alt: 'Pacific Dental Clinic: the before and after slider' }, { src: '/projects/dental-contact.webp', alt: 'Pacific Dental Clinic: the appointment booking form' }] },
-  { id: 'p4', title: 'Oriel', summary: 'A scroll-driven concept site for an independent watchmaker: a 3D watch built entirely in code comes apart layer by layer, dives into the movement, then rebuilds in the metal and dial you pick.', stack: ['Three.js', 'GSAP', 'Lenis', 'Vite'], url: 'oriel-seven.vercel.app',
+  { id: 'p4', title: 'Oriel', summary: 'A scroll-driven concept site for a watchmaker, with a 3D watch built entirely in code.', stack: ['Three.js', 'GSAP', 'Lenis', 'Vite'], url: 'oriel-seven.vercel.app',
     main: { video: '/projects/oriel-reel.mp4', poster: '/projects/oriel-poster.webp', alt: 'Oriel: the hero with a 3D watch beside the headline “Time, taken apart.”' },
     details: [{ src: '/projects/oriel-anatomy.webp', alt: 'Oriel: the exploded anatomy, seven labelled layers' }, { src: '/projects/oriel-movement.webp', alt: 'Oriel: a close view of the Calibre O-1 movement' }] },
-  { id: 'p5', title: 'Atlas', summary: 'A concept homepage for a travel agency in Algiers: private guided visits, day trips and circuits à la carte anywhere in Algeria, in a 9-seat vehicle, with a guesthouse in Algiers.', stack: ['Vite', 'JavaScript', 'CSS'], url: 'atlastours.vercel.app',
+  { id: 'p5', title: 'Atlas', summary: 'A concept homepage for a travel agency in Algiers: guided visits, day trips and custom circuits.', stack: ['Vite', 'JavaScript', 'CSS'], url: 'atlastours.vercel.app',
     main: { src: '/projects/atlas-main.webp', alt: 'Atlas: the hero of the private tours of Algeria homepage' },
     details: [{ src: '/projects/atlas-trips.webp', alt: 'Atlas: the featured trips grid' }, { src: '/projects/atlas-people.webp', alt: 'Atlas: the people section' }] },
-  { id: 'p6', title: 'Mahdi, Graphic Designer', summary: 'A one-page static portfolio for a graphic designer: brand identities, posters and packaging people remember, in plain HTML, CSS and JavaScript.', stack: ['HTML', 'CSS', 'JavaScript'], url: 'mahdi-design.vercel.app',
+  { id: 'p6', title: 'Mahdi, Graphic Designer', summary: 'A one-page portfolio for a graphic designer: brand identities, posters and packaging.', stack: ['HTML', 'CSS', 'JavaScript'], url: 'mahdi-design.vercel.app',
     main: { video: '/projects/mahdi-reel.mp4', poster: '/projects/mahdi-poster.webp', alt: 'Mahdi, Graphic Designer: a short scroll through the portfolio' },
     details: [{ src: '/projects/mahdi-work.webp', alt: 'Mahdi, Graphic Designer: the work section' }, { src: '/projects/mahdi-billboard.webp', alt: 'Mahdi, Graphic Designer: a billboard poster project' }] }
 ];
@@ -70,19 +70,19 @@ const tag = (word, icon) => ({ word, icon });
 
 export const FAQ = [
   { id: 'faq-pricing', label: 'Pricing', q: 'How do you price a project?',
-    a: 'Once the scope is clear, after a short call and a written brief, you get a fixed quote. Open-ended work, like a long-running product or a steady stream of features, is billed weekly instead.',
+    a: 'A fixed quote once the scope is clear. Open-ended work is billed weekly.',
     tags: [tag('Fixed quote', FAQ_ICONS.billList), tag('Clear scope', FAQ_ICONS.checklistMinimalistic), tag('Weekly billing', FAQ_ICONS.calendar)] },
   { id: 'faq-remote', label: 'Remote', q: 'Do you work remotely, and in which time zone?',
-    a: 'Yes. I’m based in Algeria (GMT+1), so my working day overlaps with Europe’s. Progress is written down as I go, so work keeps moving between calls.',
+    a: 'Yes. I’m in Algeria (GMT+1), so my day overlaps with Europe’s.',
     tags: [tag('Based in Algeria', FAQ_ICONS.mapPoint), tag('GMT+1', FAQ_ICONS.clockCircle), tag('Written updates', FAQ_ICONS.chatRoundDots)] },
   { id: 'faq-stack', label: 'Stack', q: 'Which technologies do you work with?',
-    a: 'Mostly JavaScript from end to end: React, Next.js and Tailwind CSS in the browser, Node.js and Express with REST APIs on the server, MySQL for data, shipped on Vercel. I design interfaces in Figma and add 3D with Three.js when a project calls for it. If your team already has a stack, I’ll work in yours.',
+    a: 'Mostly JavaScript: React, Next.js and Tailwind on the front, Node.js, Express and MySQL on the back. I can adapt to your stack.',
     tags: [tag('JavaScript', FAQ_ICONS.codeSquare), tag('APIs', FAQ_ICONS.server), tag('Databases', FAQ_ICONS.database)] },
   { id: 'faq-hiring', label: 'Hiring', q: 'Are you open to an internship?',
-    a: 'Yes. I’m available now for a part-time internship alongside my studies at USTHB, and I still take on freelance projects. I like owning a feature from the database up to the interface, as I did on the restaurant ordering system I built and led for my USTHB team.',
+    a: 'Yes. I’m available now for a part-time internship alongside my studies, and I still take freelance projects.',
     tags: [tag('Internship', FAQ_ICONS.caseRound), tag('Part-time', FAQ_ICONS.clockCircle), tag('Freelance', FAQ_ICONS.programming)] },
   { id: 'faq-support', label: 'Support', q: 'What happens after launch?',
-    a: 'You get the code, the accounts and short docs on how to run and change it, all in your name, and I can stay on for maintenance or new features after that.',
+    a: 'You get the code, the accounts and short docs, and I can stay on for maintenance.',
     tags: [tag('Your code', FAQ_ICONS.key), tag('Clear docs', FAQ_ICONS.documentText), tag('Maintenance', FAQ_ICONS.settingsMinimalistic)] }
 ];
 
