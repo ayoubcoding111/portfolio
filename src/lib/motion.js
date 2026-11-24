@@ -382,7 +382,9 @@ export class PortfolioMotion {
     const fullH = sc === w ? this.pfDoc.documentElement.scrollHeight : sc.scrollHeight;
     // On the canvas the frame is as tall as the page, so nothing can scroll: show the finished layout.
     if (fullH - viewH < 240) { return 'static'; }
-    return this.pfMatch('(prefers-reduced-motion: reduce)') ? 'reduced' : 'cinematic';
+    // Phones get the plain page: normal native scrolling, no pinned hero zoom through the O (it never sat centred on a phone).
+    const phone = this.pfMatch('(max-width: 699.98px), (pointer: coarse) and (max-height: 500px)');
+    return phone || this.pfMatch('(prefers-reduced-motion: reduce)') ? 'reduced' : 'cinematic';
   }
 
   pfRebuild() {
