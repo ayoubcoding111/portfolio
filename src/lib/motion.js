@@ -382,9 +382,7 @@ export class PortfolioMotion {
     const fullH = sc === w ? this.pfDoc.documentElement.scrollHeight : sc.scrollHeight;
     // On the canvas the frame is as tall as the page, so nothing can scroll: show the finished layout.
     if (fullH - viewH < 240) { return 'static'; }
-    // Phones get the plain page: normal native scrolling, no pinned hero zoom through the O (it never sat centred on a phone).
-    const phone = this.pfMatch('(max-width: 699.98px), (pointer: coarse) and (max-height: 500px)');
-    return phone || this.pfMatch('(prefers-reduced-motion: reduce)') ? 'reduced' : 'cinematic';
+    return this.pfMatch('(prefers-reduced-motion: reduce)') ? 'reduced' : 'cinematic';
   }
 
   pfRebuild() {
@@ -778,6 +776,18 @@ export class PortfolioMotion {
     // at every size. The hero pins while the zoom plays, so you fly through the O instead of watching it leave.
     const inner = this.pfOne('.pf-hero__inner');
     if (!inner || !nameEl) { return playIntro; }
+    // Phones: no pinned zoom through the O (it never sat centred on a small screen). The hero just scrolls away like any
+    // section, and the dots fade out as it leaves; every other animation on the page stays.
+    if (this.pfMatch('(max-width: 699.98px), (pointer: coarse) and (max-height: 500px)')) {
+      ScrollTrigger.create({
+        trigger: hero, start: 'top top', end: 'bottom top', scrub: true, invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          this.pfNameScrolled = self.progress > 0.002;
+          if (field) { field.setHeroScroll(self.progress); field.setOpacity(1 - pfClamp(self.progress / 0.9, 0, 1)); }
+        },
+      });
+      return playIntro;
+    }
     const about = this.pfOne('#about');
     const zoom = { s: 16 };
     // How far About's text has risen into the bottom of the screen when the zoom ends, as a share of the screen's height.
